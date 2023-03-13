@@ -1,0 +1,47 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7db9bb25b9aff4642b297b856437acc4, type: 3}
+  m_Name: Pine
+  m_EditorClassIdentifier: 
+  resourceAmount:
+  - resourceType: {fileID: 11400000, guid: 00b7c9e9ae1a9e746a2588220c6a7a99, type: 2}
+    amount: 0
+  - resourceType: {fileID: 11400000, guid: f2c7e2e086190e949a7f3e085c0b121d, type: 2}
+    amount: 0
+  - resourceType: {fileID: 11400000, guid: 2135960d4f6d7754289627f8bc0baaf0, type: 2}
+    amount: 0
+  resourceUse:
+  - resourceType: {fileID: 11400000, guid: 00b7c9e9ae1a9e746a2588220c6a7a99, type: 2}
+    amount: 0
+  - resourceType: {fileID: 11400000, guid: f2c7e2e086190e949a7f3e085c0b121d, type: 2}
+    amount: 0
+  - resourceType: {fileID: 11400000, guid: 2135960d4f6d7754289627f8bc0baaf0, type: 2}
+    amount: 0
+  resourceProcude:
+  - resourceType: {fileID: 11400000, guid: 00b7c9e9ae1a9e746a2588220c6a7a99, type: 2}
+    amount: 0
+  - resourceType: {fileID: 11400000, guid: f2c7e2e086190e949a7f3e085c0b121d, type: 2}
+    amount: 0
+  - resourceType: {fileID: 11400000, guid: 2135960d4f6d7754289627f8bc0baaf0, type: 2}
+    amount: 0
+  resourceMax:
+  - resourceType: {fileID: 11400000, guid: 00b7c9e9ae1a9e746a2588220c6a7a99, type: 2}
+    amount: 0
+  - resourceType: {fileID: 11400000, guid: f2c7e2e086190e949a7f3e085c0b121d, type: 2}
+    amount: 0
+  - resourceType: {fileID: 11400000, guid: 2135960d4f6d7754289627f8bc0baaf0, type: 2}
+    amount: 0
+  resourceTrade: []
+  treeSprites:
+  - {fileID: 21300000, guid: 8b89d4d0f99ff294cbb39b2a74882ea0, type: 3}
+  - {fileID: 21300000, guid: 134e7568524f029498f25516f67539a9, type: 3}
+  - {fileID: 21300000, guid: 928ad14536ae6e248a49f520ab5dec8f, type: 3}

@@ -1,0 +1,525 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0a89affcc32cc142ae531605f86bfbb, type: 3}
+  m_Name: CoreGameplay
+  m_EditorClassIdentifier: 
+  snap: 1
+  snapSize: 10
+  snapColor: {r: 0, g: 0, b: 0, a: 0.1}
+  noteWindowRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 1020
+    height: 694
+  scrollPosition: {x: 212.70882, y: 184.5}
+  windows:
+  - className: Header-67216
+    type: 1
+    id: 67216
+    moveHandleActive: 0
+    sizeHandleActive: 0
+    arrowHandleActive: 0
+    rect:
+      serializedVersion: 2
+      x: 210
+      y: 50
+      width: 130
+      height: 30
+    windowMinSize: {x: 100, y: 30}
+    windowMaxSize: {x: 500, y: 100}
+    connects: []
+    header:
+      header: StateManagment
+      fontStyle: 0
+      fontSize: 15
+      fontColor: {r: 1, g: 1, b: 1, a: 1}
+      backgroundColor: {r: 0, g: 0, b: 0, a: 0.3}
+    textArea:
+      text: Text
+      fontStyle: 0
+      fontSize: 15
+      fontColor: {r: 1, g: 1, b: 1, a: 1}
+    todoList:
+      items:
+      - active: 0
+        text: 
+      header: 0
+      headerText: Header
+    colorVariable:
+      hexCode: FFFFFF
+      color: {r: 1, g: 1, b: 1, a: 1}
+      RGBAtoHex: 0
+    imageVariable:
+      imagePath: 
+      scaleMode: 0
+      alphaBlend: 1
+      color: {r: 1, g: 1, b: 1, a: 1}
+    vectorVariable:
+      type: 0
+      header: 
+      vector2: {x: 0, y: 0}
+      vector3: {x: 0, y: 0, z: 0}
+      vector4: {x: 0, y: 0, z: 0, w: 0}
+  - className: TodoList-99162
+    type: 3
+    id: 99162
+    moveHandleActive: 0
+    sizeHandleActive: 0
+    arrowHandleActive: 0
+    rect:
+      serializedVersion: 2
+      x: 440
+      y: 220
+      width: 280
+      height: 164
+    windowMinSize: {x: 150, y: 50}
+    windowMaxSize: {x: 0, y: 0}
+    connects: []
+    header:
+      header: Header
+      fontStyle: 0
+      fontSize: 15
+      fontColor: {r: 1, g: 1, b: 1, a: 1}
+      backgroundColor: {r: 0, g: 0, b: 0, a: 0.3}
+    textArea:
+      text: Text
+      fontStyle: 0
+      fontSize: 15
+      fontColor: {r: 1, g: 1, b: 1, a: 1}
+    todoList:
+      items:
+      - active: 1
+        text: Move the camera with A-D
+      - active: 1
+        text: Jump to the next tree with shift + A-D
+      - active: 1
+        text: Hover to a tree to reveal UI
+      - active: 1
+        text: Start conquering with right click
+      - active: 1
+        text: Use manager camera
+      - active: 1
+        text: Camare movement speed increase by time
+      - active: 0
+        text: Only jump to follow cam if certain distance
+      header: 0
+      headerText: Header
+    colorVariable:
+      hexCode: FFFFFF
+      color: {r: 1, g: 1, b: 1, a: 1}
+      RGBAtoHex: 0
+    imageVariable:
+      imagePath: 
+      scaleMode: 0
+      alphaBlend: 1
+      color: {r: 1, g: 1, b: 1, a: 1}
+    vectorVariable:
+      type: 0
+      header: 
+      vector2: {x: 0, y: 0}
+      vector3: {x: 0, y: 0, z: 0}
+      vector4: {x: 0, y: 0, z: 0, w: 0}
+  - className: Header-26543
+    type: 1
+    id: 26543
+    moveHandleActive: 0
+    sizeHandleActive: 0
+    arrowHandleActive: 0
+    rect:
+      serializedVersion: 2
+      x: 420
+      y: 170
+      width: 140
+      height: 30
+    windowMinSize: {x: 100, y: 30}
+    windowMaxSize: {x: 500, y: 100}
+    connects:
+    - id: 99162
+      rect:
+        serializedVersion: 2
+        x: 478.9796
+        y: 189.67346
+        width: 60
+        height: 40
+      moveHandleActive: 0
+      label: 0
+      startArrow: 0
+      endArrow: 1
+      labelText: 
+      offset: {x: 0, y: 0}
+      color: {r: 1, g: 1, b: 1, a: 1}
+    header:
+      header: Managment State
+      fontStyle: 0
+      fontSize: 15
+      fontColor: {r: 1, g: 1, b: 1, a: 1}
+      backgroundColor: {r: 0, g: 0, b: 0, a: 0.3}
+    textArea:
+      text: Text
+      fontStyle: 0
+      fontSize: 15
+      fontColor: {r: 1, g: 1, b: 1, a: 1}
+    todoList:
+      items:
+      - active: 0
+        text: 
+      header: 0
+      headerText: Header
+    colorVariable:
+      hexCode: FFFFFF
+      color: {r: 1, g: 1, b: 1, a: 1}
+      RGBAtoHex: 0
+    imageVariable:
+      imagePath: 
+      scaleMode: 0
+      alphaBlend: 1
+      color: {r: 1, g: 1, b: 1, a: 1}
+    vectorVariable:
+      type: 0
+      header: 
+      vector2: {x: 0, y: 0}
+      vector3: {x: 0, y: 0, z: 0}
+      vector4: {x: 0, y: 0, z: 0, w: 0}
+  - className: Header-56859
+    type: 1
+    id: 56859
+    moveHandleActive: 0
+    sizeHandleActive: 0
+    arrowHandleActive: 0
+    rect:
+      serializedVersion: 2
+      x: 210
+      y: 120
+      width: 120
+      height: 30
+    windowMinSize: {x: 100, y: 30}
+    windowMaxSize: {x: 500, y: 100}
+    connects:
+    - id: 67216
+      rect:
+        serializedVersion: 2
+        x: 242.5357
+        y: 79.5
+        width: 60
+        height: 40
+      moveHandleActive: 0
+      label: 0
+      startArrow: 0
+      endArrow: 1
+      labelText: 
+      offset: {x: 0, y: 0}
+      color: {r: 1, g: 1, b: 1, a: 1}
+    - id: 26543
+      rect:
+        serializedVersion: 2
+        x: 311.31763
+        y: 316.65234
+        width: 60
+        height: 40
+      moveHandleActive: 0
+      label: 0
+      startArrow: 0
+      endArrow: 1
+      labelText: 
+      offset: {x: -4.4376006, y: -180.83234}
+      color: {r: 1, g: 1, b: 1, a: 1}
+    - id: 64402
+      rect:
+        serializedVersion: 2
+        x: 240
+        y: 144.5
+        width: 60
+        height: 40
+      moveHandleActive: 0
+      label: 0
+      startArrow: 0
+      endArrow: 1
+      labelText: 
+      offset: {x: 0, y: 0}
+      color: {r: 1, g: 1, b: 1, a: 1}
+    - id: 73551
+      rect:
+        serializedVersion: 2
+        x: 121.83504
+        y: 152.17226
+        width: 60
+        height: 40
+      moveHandleActive: 0
+      label: 0
+      startArrow: 0
+      endArrow: 1
+      labelText: 
+      offset: {x: -38.253307, y: -6.68503}
+      color: {r: 1, g: 1, b: 1, a: 1}
+    header:
+      header: StateMachine
+      fontStyle: 0
+      fontSize: 15
+      fontColor: {r: 1, g: 1, b: 1, a: 1}
+      backgroundColor: {r: 0, g: 0, b: 0, a: 0.3}
+    textArea:
+      text: Text
+      fontStyle: 0
+      fontSize: 15
+      fontColor: {r: 1, g: 1, b: 1, a: 1}
+    todoList:
+      items:
+      - active: 0
+        text: 
+      header: 0
+      headerText: Header
+    colorVariable:
+      hexCode: FFFFFF
+      color: {r: 1, g: 1, b: 1, a: 1}
+      RGBAtoHex: 0
+    imageVariable:
+      imagePath: 
+      scaleMode: 0
+      alphaBlend: 1
+      color: {r: 1, g: 1, b: 1, a: 1}
+    vectorVariable:
+      type: 0
+      header: 
+      vector2: {x: 0, y: 0}
+      vector3: {x: 0, y: 0, z: 0}
+      vector4: {x: 0, y: 0, z: 0, w: 0}
+  - className: Header-73551
+    type: 1
+    id: 73551
+    moveHandleActive: 0
+    sizeHandleActive: 0
+    arrowHandleActive: 0
+    rect:
+      serializedVersion: 2
+      x: 60
+      y: 180
+      width: 100
+      height: 30
+    windowMinSize: {x: 100, y: 30}
+    windowMaxSize: {x: 500, y: 100}
+    connects:
+    - id: 59949
+      rect:
+        serializedVersion: 2
+        x: 70.350876
+        y: 195.07018
+        width: 60
+        height: 40
+      moveHandleActive: 0
+      label: 0
+      startArrow: 0
+      endArrow: 1
+      labelText: 
+      offset: {x: 0, y: 0}
+      color: {r: 1, g: 1, b: 1, a: 1}
+    header:
+      header: Die State
+      fontStyle: 0
+      fontSize: 15
+      fontColor: {r: 1, g: 1, b: 1, a: 1}
+      backgroundColor: {r: 0, g: 0, b: 0, a: 0.3}
+    textArea:
+      text: Text
+      fontStyle: 0
+      fontSize: 15
+      fontColor: {r: 1, g: 1, b: 1, a: 1}
+    todoList:
+      items:
+      - active: 0
+        text: 
+      header: 0
+      headerText: Header
+    colorVariable:
+      hexCode: FFFFFF
+      color: {r: 1, g: 1, b: 1, a: 1}
+      RGBAtoHex: 0
+    imageVariable:
+      imagePath: 
+      scaleMode: 0
+      alphaBlend: 1
+      color: {r: 1, g: 1, b: 1, a: 1}
+    vectorVariable:
+      type: 0
+      header: 
+      vector2: {x: 0, y: 0}
+      vector3: {x: 0, y: 0, z: 0}
+      vector4: {x: 0, y: 0, z: 0, w: 0}
+  - className: Header-64402
+    type: 1
+    id: 64402
+    moveHandleActive: 0
+    sizeHandleActive: 0
+    arrowHandleActive: 0
+    rect:
+      serializedVersion: 2
+      x: 210
+      y: 180
+      width: 120
+      height: 30
+    windowMinSize: {x: 100, y: 30}
+    windowMaxSize: {x: 500, y: 100}
+    connects:
+    - id: 37433
+      rect:
+        serializedVersion: 2
+        x: 320.3959
+        y: 99.76151
+        width: 60
+        height: 40
+      moveHandleActive: 0
+      label: 0
+      startArrow: 0
+      endArrow: 1
+      labelText: 
+      offset: {x: 86.267, y: 91.92382}
+      color: {r: 1, g: 1, b: 1, a: 1}
+    header:
+      header: Conquer State
+      fontStyle: 0
+      fontSize: 15
+      fontColor: {r: 1, g: 1, b: 1, a: 1}
+      backgroundColor: {r: 0, g: 0, b: 0, a: 0.3}
+    textArea:
+      text: Text
+      fontStyle: 0
+      fontSize: 15
+      fontColor: {r: 1, g: 1, b: 1, a: 1}
+    todoList:
+      items:
+      - active: 0
+        text: 
+      header: 0
+      headerText: Header
+    colorVariable:
+      hexCode: FFFFFF
+      color: {r: 1, g: 1, b: 1, a: 1}
+      RGBAtoHex: 0
+    imageVariable:
+      imagePath: 
+      scaleMode: 0
+      alphaBlend: 1
+      color: {r: 1, g: 1, b: 1, a: 1}
+    vectorVariable:
+      type: 0
+      header: 
+      vector2: {x: 0, y: 0}
+      vector3: {x: 0, y: 0, z: 0}
+      vector4: {x: 0, y: 0, z: 0, w: 0}
+  - className: TodoList-37433
+    type: 3
+    id: 37433
+    moveHandleActive: 0
+    sizeHandleActive: 0
+    arrowHandleActive: 0
+    rect:
+      serializedVersion: 2
+      x: 160
+      y: 230
+      width: 260
+      height: 164
+    windowMinSize: {x: 150, y: 50}
+    windowMaxSize: {x: 0, y: 0}
+    connects: []
+    header:
+      header: Header
+      fontStyle: 0
+      fontSize: 15
+      fontColor: {r: 1, g: 1, b: 1, a: 1}
+      backgroundColor: {r: 0, g: 0, b: 0, a: 0.3}
+    textArea:
+      text: Text
+      fontStyle: 0
+      fontSize: 15
+      fontColor: {r: 1, g: 1, b: 1, a: 1}
+    todoList:
+      items:
+      - active: 1
+        text: Yarn follow the cursor
+      - active: 1
+        text: Sprint with left click
+      - active: 0
+        text: Spin around cursor at minimum arc
+      - active: 0
+        text: Dash with right click
+      - active: 1
+        text: Back to manage, if collide with obstacle
+      - active: 1
+        text: Use follow camera
+      - active: 1
+        text: Can connect trees
+      header: 0
+      headerText: Header
+    colorVariable:
+      hexCode: FFFFFF
+      color: {r: 1, g: 1, b: 1, a: 1}
+      RGBAtoHex: 0
+    imageVariable:
+      imagePath: 
+      scaleMode: 0
+      alphaBlend: 1
+      color: {r: 1, g: 1, b: 1, a: 1}
+    vectorVariable:
+      type: 0
+      header: 
+      vector2: {x: 0, y: 0}
+      vector3: {x: 0, y: 0, z: 0}
+      vector4: {x: 0, y: 0, z: 0, w: 0}
+  - className: TodoList-59949
+    type: 3
+    id: 59949
+    moveHandleActive: 0
+    sizeHandleActive: 0
+    arrowHandleActive: 0
+    rect:
+      serializedVersion: 2
+      x: 10
+      y: 220
+      width: 150
+      height: 54
+    windowMinSize: {x: 150, y: 50}
+    windowMaxSize: {x: 0, y: 0}
+    connects: []
+    header:
+      header: Header
+      fontStyle: 0
+      fontSize: 15
+      fontColor: {r: 1, g: 1, b: 1, a: 1}
+      backgroundColor: {r: 0, g: 0, b: 0, a: 0.3}
+    textArea:
+      text: Text
+      fontStyle: 0
+      fontSize: 15
+      fontColor: {r: 1, g: 1, b: 1, a: 1}
+    todoList:
+      items:
+      - active: 1
+        text: Zoom out complity
+      - active: 1
+        text: Restart with any key
+      header: 0
+      headerText: Header
+    colorVariable:
+      hexCode: FFFFFF
+      color: {r: 1, g: 1, b: 1, a: 1}
+      RGBAtoHex: 0
+    imageVariable:
+      imagePath: 
+      scaleMode: 0
+      alphaBlend: 1
+      color: {r: 1, g: 1, b: 1, a: 1}
+    vectorVariable:
+      type: 0
+      header: 
+      vector2: {x: 0, y: 0}
+      vector3: {x: 0, y: 0, z: 0}
+      vector4: {x: 0, y: 0, z: 0, w: 0}
