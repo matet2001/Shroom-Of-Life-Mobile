@@ -9,13 +9,13 @@ public class TreeResourceData : ResourceData
     public TreeResourceData(TreeType treeType) : base(treeType)
     {       
         Initialize(treeType);
-      
-        //ResourceTypeContainer resourceTypeContainer = Resources.Load<ResourceTypeContainer>("ResourceTypeContainer");
-        //resourceTrade = new Dictionary<ResourceType, float>();
 
-        //foreach (ResourceType resourceType in resourceTypeContainer.resourceTypes)
-        //{
-        //    resourceTrade[resourceType] = treeType.resourceTrade.Find(x => x.resourceType == resourceType).amount;
-        //}
+        ResourceTypeContainer resourceTypeContainer = Resources.Load<ResourceTypeContainer>("ResourceTypeContainer");
+        resourceTrade = new Dictionary<ResourceType, float>();
+
+        foreach (ResourceType resourceType in resourceTypeContainer.resourceTypes)
+        {
+            resourceTrade[resourceType] = treeType.resourceTrade.Find(x => x.resourceType == resourceType).amount;
+        }
     }
 }

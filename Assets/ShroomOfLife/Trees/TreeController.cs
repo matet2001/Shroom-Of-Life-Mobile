@@ -3,12 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
 public class TreeController : MonoBehaviour
 {
     public static event Action<TreeController> OnTreeCollision;
 
     [SerializeField] TreeUIManager treeUIManager;
-    [SerializeField] TreeCollisionManager treeCollisionManager;
+    [SerializeField] TreeCollider treeCollisionManager;
     [SerializeField] TreeSpriteController treeSpriteController;
 
     [SerializeField] TreeType treeType;

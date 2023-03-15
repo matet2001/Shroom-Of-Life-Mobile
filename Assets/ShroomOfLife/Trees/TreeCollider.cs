@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TreeCollisionManager : MonoBehaviour, ICollidable
+public class TreeCollider : MonoBehaviour, ICollidable
 {
     public event Action OnYarnCollided;
 

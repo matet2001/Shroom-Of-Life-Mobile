@@ -11,6 +11,11 @@ public class ResourceDataType : ScriptableObject
     public List<ResourceAmount> resourceProcude;
     public List<ResourceAmount> resourceMax;
 
+    [ExecuteInEditMode]
+    private void Awake()
+    {
+        ReBuild();
+    }
     [ContextMenu("Rebuild")]
     public virtual void ReBuild()
     {
