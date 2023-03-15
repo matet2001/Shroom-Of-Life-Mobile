@@ -5,5 +5,6 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "ResourceTypeSO", menuName = "ScriptableObjects/Resources/ResourceType")]
 public class ResourceType : ScriptableObject
 {
-    public Sprite resourceImageUI;
+    public Sprite iconImage;
+    public Color sliderColor;
 }

@@ -18,7 +18,6 @@ public class ManagerCameraMovementController : MonoBehaviour
     private float cameraSpeedResetTimer;
 
     private List<Vector2> treePositionList;
-    public Transform cameraTransform { private get; set; }
     [SerializeField] float minimumAngle;
 
     private void Awake()
@@ -87,13 +86,14 @@ public class ManagerCameraMovementController : MonoBehaviour
 
         if (inputDirection == 0) return;
       
-        Vector2 containerForwardVector = cameraTransform.position - cameraContainerTransform.position;
+        Vector2 containerUpVector = cameraContainerTransform.up;
+       
         float closestAngle = 360f;
 
         foreach (Vector2 treePosition in treePositionList)
         {
             Vector2 containerToTreeVector = treePosition - (Vector2)cameraContainerTransform.position;
-            float containerToTreeAngle = Vector2.SignedAngle(containerForwardVector.normalized, containerToTreeVector.normalized);
+            float containerToTreeAngle = Vector2.SignedAngle(containerUpVector, containerToTreeVector.normalized);
 
             if (Mathf.Sign(containerToTreeAngle) != Mathf.Sign(inputDirection)) continue;
             if (Mathf.Abs(containerToTreeAngle) > Mathf.Abs(closestAngle)) continue;

@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TreeCollider : MonoBehaviour, ICollidable
+public class TreeCollider : Collidable
 {
     public event Action OnYarnCollided;
 
@@ -12,8 +12,9 @@ public class TreeCollider : MonoBehaviour, ICollidable
     {
         collider = GetComponent<PolygonCollider2D>();
     }
-    public void Collision()
+    public override void Collision()
     {
+        base.Collision();
         OnYarnCollided?.Invoke();
     }
     public void ResetCollider()

@@ -9,7 +9,6 @@ public class ManagerCameraDistanceChecker : MonoBehaviour
     private List<TreeUIManager> treeUIList;
 
     public Transform cameraContainerTransform { private get; set; }
-    public Transform cameraTransform { private get; set; }
 
     private void Awake()
     {
@@ -25,9 +24,8 @@ public class ManagerCameraDistanceChecker : MonoBehaviour
         }
     }
     public void CheckDistanceFromTrees()
-    {
-        Vector2 containerToCameraVector = cameraTransform.position - cameraContainerTransform.position;
-        float containerToCameraAngle = Vector2.SignedAngle(containerToCameraVector, cameraContainerTransform.up);
+    {        
+        float containerToCameraAngle = Vector2.SignedAngle(cameraContainerTransform.up, cameraContainerTransform.up);
         
         foreach (TreeUIManager treeUI in treeUIList)
         {

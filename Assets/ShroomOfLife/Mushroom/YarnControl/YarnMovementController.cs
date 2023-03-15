@@ -1,19 +1,25 @@
 using StateManagment;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class YarnMovementController : MonoBehaviour
 {
+    public static event Action OnRunOutOfYarnResource;
+    
     private Transform yarnTrailPrefab;
     private Transform currentYarnTrail;
     [SerializeField] Transform yarnTrailContainer;
     [SerializeField] YarnCrosshairController yarnCrosshairController;
 
     [SerializeField] float idleSpeed, sprintMultiplier;
+    [SerializeField] ResourceAmount idleMovementCost, sprintMovementCost;
 
     private bool shouldMoveYarn;
     private bool shouldMoveOnArc;
+    
+    private List<Vector2> mushroomBottonPositions;
     private Vector2 startPosition;
 
     private Vector3 currentArcVector;
@@ -22,33 +28,85 @@ public class YarnMovementController : MonoBehaviour
 
     private void Awake()
     {
-        startPosition = transform.position;
         yarnTrailPrefab = Resources.Load<Transform>("pfYarnTrail");
+        startPosition = transform.position;
     }
     private void Start()
     {
-        ConquerState.OnConquerStateEnter += ConquerState_OnConquerStateEnter;
+        SubscribeToEvents();
+    }
+    #region Event subscriptions
+    private void SubscribeToEvents()
+    {
+        ConquerState.OnConquerStateEnter += StartYarn;
         ConquerState.OnConquerStateExit += ConquerState_OnConquerStateExit;
+
         ManagerState.OnManagerStateEnter += ManagerState_OnManagerStateEnter;
+        ManagerState.OnManagerStateExit += SetClosestPoint;
 
         YarnCrosshairController.OnYarnCrosshairEnter += YarnCrosshairController_OnYarnCrosshairEnter;
         YarnCrosshairController.OnYarnCrosshairExit += delegate (Vector2 position) { shouldMoveOnArc = false; };
-    }  
-    private void ConquerState_OnConquerStateEnter()
+
+        ConnectionManager.OnMushroomListChange += ConnectionManager_OnMushroomListChange;
+    }
+    private void StartYarn()
     {
         shouldMoveYarn = true;
-
-        transform.position = startPosition;
-
         currentYarnTrail = Instantiate(yarnTrailPrefab, transform.position, Quaternion.identity, transform);
     }
     private void ConquerState_OnConquerStateExit()
     {
-        DetacheYarn();
+        StopMoving();
     }
     private void ManagerState_OnManagerStateEnter()
     {
         
+    }
+    private void ConnectionManager_OnMushroomListChange(List<MushroomController> mushroomList)
+    {
+        mushroomBottonPositions = new List<Vector2>();
+
+        foreach (MushroomController mushroomController in mushroomList)
+        {
+            Vector2 mushroomBottomPosition = mushroomController.GetYarnStartPosition();
+            mushroomBottonPositions.Add(mushroomBottomPosition);
+        }
+    }
+    #endregion
+    private void SetClosestPoint(Transform containerTransform)
+    {
+        startPosition = GetClosestMushroomBottomPoint(containerTransform);
+        transform.position = startPosition;
+    }
+    private Vector2 GetClosestMushroomBottomPoint(Transform containerTransform)
+    {
+        Vector2 closestMushroomBottomPoint = Vector2.zero;
+        float closestAngle = Mathf.Infinity;
+        bool isAnyMushroomFound = false;
+
+        foreach (Vector2 mushroomBottomPoint in mushroomBottonPositions)
+        {
+            float angle = Vector2.Angle(containerTransform.up, mushroomBottomPoint);
+
+            if (angle < closestAngle)
+            {
+                closestAngle = angle;
+                closestMushroomBottomPoint = mushroomBottomPoint;
+                isAnyMushroomFound = true;
+            }
+        }
+
+        if (isAnyMushroomFound)
+        {
+            return closestMushroomBottomPoint;
+        } 
+        return startPosition;
+    }
+    private void StopMoving()
+    {
+        shouldMoveYarn = false;
+        DetacheYarn();
+        transform.position = startPosition;
     }
     private void DetacheYarn()
     {
@@ -68,6 +126,14 @@ public class YarnMovementController : MonoBehaviour
 
         if (!shouldMoveOnArc) SimpleYarcMovement();
         else MoveYarnAtArc();
+
+        float movementCost = DecideMovementCost() * Time.deltaTime;
+        bool isResourceSpent = ResourceManager.resourceData.TryToSpendResource(idleMovementCost.resourceType, movementCost);
+        if (!isResourceSpent)
+        {
+            StopMoving();
+            OnRunOutOfYarnResource?.Invoke();
+        }
     }
     private void SimpleYarcMovement()
     {
@@ -76,7 +142,6 @@ public class YarnMovementController : MonoBehaviour
 
         MoveTransformToDirection(direction, DecideSpeed());
     }
-
     private void MoveTransformToDirection(Vector3 direction, float moveSpeed)
     {
         transform.position += direction * moveSpeed * Time.deltaTime;
@@ -86,6 +151,12 @@ public class YarnMovementController : MonoBehaviour
         bool isSprintButtonDown = InputManager.IsMouseLeftClick();
         float moveSpeed = (!isSprintButtonDown) ? idleSpeed : idleSpeed * sprintMultiplier;
         return moveSpeed;
+    }
+    private float DecideMovementCost()
+    {
+        bool isSprintButtonDown = InputManager.IsMouseLeftClick();
+        float movementCost = (!isSprintButtonDown) ? idleMovementCost.amount : idleMovementCost.amount * sprintMultiplier;
+        return movementCost;
     }
     private void YarnCrosshairController_OnYarnCrosshairEnter(Vector2 position)
     {
@@ -104,7 +175,7 @@ public class YarnMovementController : MonoBehaviour
     }
     private void OnDestroy()
     {
-        ConquerState.OnConquerStateEnter -= ConquerState_OnConquerStateEnter;
+        ConquerState.OnConquerStateEnter -= StartYarn;
         ConquerState.OnConquerStateExit -= ConquerState_OnConquerStateExit;
         ManagerState.OnManagerStateEnter -= ManagerState_OnManagerStateEnter;
     }

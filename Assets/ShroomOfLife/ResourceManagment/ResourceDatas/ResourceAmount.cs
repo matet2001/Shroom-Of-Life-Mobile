@@ -14,4 +14,9 @@ public class ResourceAmount
         resourceType = _resourceType;
         amount = 0;
     }
+    public ResourceAmount(ResourceType _resourceType, float _amount)
+    {
+        resourceType = _resourceType;
+        amount = _amount;
+    }
 }

@@ -136,6 +136,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3889796244908447081}
+  - component: {fileID: 4464180603202748011}
   m_Layer: 5
   m_Name: pfResourceSlider
   m_TagString: Untagged
@@ -166,6 +167,22 @@ RectTransform:
   m_AnchoredPosition: {x: 82, y: 262}
   m_SizeDelta: {x: 160, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &4464180603202748011
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5089289611637859844}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c0aff16a0dda57948a72b46647c4d3cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  slider: {fileID: 7052535712679330902}
+  sliderFillImage: {fileID: 142668593397598124}
+  iconImage: {fileID: 8007038576661080222}
+  valueText: {fileID: 8388752173189309787}
 --- !u!1 &5199767559890292629
 GameObject:
   m_ObjectHideFlags: 0

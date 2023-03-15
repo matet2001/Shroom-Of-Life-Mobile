@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7a100bba869355b46bf26f65ce9044ce, type: 3}
   m_Name: Energy
   m_EditorClassIdentifier: 
-  resourceName: 
-  resourceImageUI: {fileID: 0}
+  iconImage: {fileID: 21300000, guid: dfd97d3a89233ab48b3cc2e4bbb1f8a7, type: 3}
+  sliderColor: {r: 1, g: 0.83204454, b: 0.023584902, a: 1}

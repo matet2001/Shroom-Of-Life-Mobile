@@ -412,7 +412,8 @@ MonoBehaviour:
   treeUIManager: {fileID: 7539187129825660513}
   treeCollisionManager: {fileID: 7539187131193200141}
   treeSpriteController: {fileID: 7539187129825660514}
-  treeType: {fileID: 11400000, guid: 98b79b59f1a9c53428ba58d5b3cb545d, type: 2}
+  treeType: {fileID: 11400000, guid: de1fd086c5c33434483708ec4887b8ea, type: 2}
+  resourceData: {fileID: 0}
 --- !u!114 &7539187129825660513
 MonoBehaviour:
   m_ObjectHideFlags: 0

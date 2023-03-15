@@ -70,8 +70,8 @@ public class YarnCrosshairController : MonoBehaviour
     {
         return Vector2.Distance(transform.position, position) < arcDistace;
     }
-    private void OnDrawGizmos()
-    {
-        Gizmos.DrawWireSphere(transform.position, arcDistace);
-    }
+    //private void OnDrawGizmos()
+    //{
+    //    Gizmos.DrawWireSphere(transform.position, arcDistace);
+    //}
 }

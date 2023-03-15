@@ -9,10 +9,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 29d6878e9e7138d4cbcf6a704dd85225, type: 3}
-  m_Name: StartResourceSO
+  m_Script: {fileID: 11500000, guid: ca0d5db914d595f4ea43aee067152c68, type: 3}
+  m_Name: MushroomResourceData
   m_EditorClassIdentifier: 
-  resourceAmount:
+  resourceMax:
   - resourceType: {fileID: 11400000, guid: 00b7c9e9ae1a9e746a2588220c6a7a99, type: 2}
     amount: 0
   - resourceType: {fileID: 11400000, guid: f2c7e2e086190e949a7f3e085c0b121d, type: 2}
@@ -21,21 +21,7 @@ MonoBehaviour:
     amount: 0
   resourceUse:
   - resourceType: {fileID: 11400000, guid: 00b7c9e9ae1a9e746a2588220c6a7a99, type: 2}
-    amount: 0
-  - resourceType: {fileID: 11400000, guid: f2c7e2e086190e949a7f3e085c0b121d, type: 2}
-    amount: 0
-  - resourceType: {fileID: 11400000, guid: 2135960d4f6d7754289627f8bc0baaf0, type: 2}
-    amount: 0
-  resourceProcude:
-  - resourceType: {fileID: 11400000, guid: 00b7c9e9ae1a9e746a2588220c6a7a99, type: 2}
-    amount: 0
-  - resourceType: {fileID: 11400000, guid: f2c7e2e086190e949a7f3e085c0b121d, type: 2}
-    amount: 0
-  - resourceType: {fileID: 11400000, guid: 2135960d4f6d7754289627f8bc0baaf0, type: 2}
-    amount: 0
-  resourceMax:
-  - resourceType: {fileID: 11400000, guid: 00b7c9e9ae1a9e746a2588220c6a7a99, type: 2}
-    amount: 0
+    amount: 1
   - resourceType: {fileID: 11400000, guid: f2c7e2e086190e949a7f3e085c0b121d, type: 2}
     amount: 0
   - resourceType: {fileID: 11400000, guid: 2135960d4f6d7754289627f8bc0baaf0, type: 2}

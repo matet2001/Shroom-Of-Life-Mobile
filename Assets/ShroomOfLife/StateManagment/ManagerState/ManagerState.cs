@@ -8,6 +8,8 @@ namespace StateManagment
     public class ManagerState : GameState
     { 
         public static event Action OnManagerStateEnter;
+        public static event Action<Transform> OnManagerStateExit;
+        
         private bool isCollisionHappened;
 
         private ManagerCameraMovementController cameraMovementController;
@@ -17,15 +19,11 @@ namespace StateManagment
        
         private void Start()
         {
-            StoneCollisionManager.OnStoneCollision += EnterManagmentState;
-            GlobeCollisionController.OnYarnExitGlobe += EnterManagmentState;
-            TreeController.OnTreeCollision += (treeController) => EnterManagmentState();//delegate(TreeController treeController) { EnterManagmentState; };
+            Collidable.OnCollidableCollision += EnterManagmentState;
 
             cameraMovementController = GetComponentInChildren<ManagerCameraMovementController>();
             distanceChecker = GetComponentInChildren<ManagerCameraDistanceChecker>();
 
-            cameraMovementController.cameraTransform = stateVirtualCamera.transform;
-            distanceChecker.cameraTransform = stateVirtualCamera.transform;
             cameraMovementController.cameraContainerTransform = cameraContainerTransform;
             distanceChecker.cameraContainerTransform = cameraContainerTransform;
         }
@@ -44,6 +42,8 @@ namespace StateManagment
         public override void OnExit()
         {
             base.OnExit();
+            OnManagerStateExit?.Invoke(cameraContainerTransform);
+            
             cameraMovementController.ResetCamera();
             isCollisionHappened = false;
         }

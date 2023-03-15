@@ -13,15 +13,26 @@ namespace StateManagment
 
         [SerializeField] GameObject stopCamera;
 
+        private CinemachineVirtualCamera virtualCamera;
+
         private void Start()
         {
             YarnCrosshairController.OnYarnCrosshairEnter += (Vector2 position) => SwitchToStopCamera(position);
-            YarnCrosshairController.OnYarnCrosshairExit += (Vector2 position) => SwitchToFollowCamera(position);
+            YarnCrosshairController.OnYarnCrosshairExit += (Vector2 position) => SwitchToFollowCamera(position); 
         }
         public override void OnEnter()
         {
             base.OnEnter();
+
             OnConquerStateEnter?.Invoke();
+
+            SetCameraPositionToYarn();
+        }
+        private void SetCameraPositionToYarn()
+        {
+            if(!virtualCamera) virtualCamera = stateVirtualCamera.GetComponent<CinemachineVirtualCamera>();
+            Vector3 positionToSet = virtualCamera.Follow.position;
+            stateVirtualCamera.transform.position = positionToSet;
         }
         public override void OnUpdate()
         {

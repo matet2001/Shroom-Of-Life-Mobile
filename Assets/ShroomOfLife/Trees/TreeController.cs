@@ -7,15 +7,17 @@ using UnityEngine;
 public class TreeController : MonoBehaviour
 {
     public static event Action<TreeController> OnTreeCollision;
+    public static event Action OnTreeUgrade;
 
     [SerializeField] TreeUIManager treeUIManager;
     [SerializeField] TreeCollider treeCollisionManager;
     [SerializeField] TreeSpriteController treeSpriteController;
 
     [SerializeField] TreeType treeType;
-    private TreeResourceData resourceData;
+    public TreeResourceData resourceData { get; private set; }
 
-    private int growLevel = 0, growLevelMax = 3;
+    private int growLevel = 0;
+    private readonly int growLevelMax = 3;
 
     private void Awake()
     {
@@ -33,17 +35,34 @@ public class TreeController : MonoBehaviour
     private void TryToGrow()
     {
         if (growLevel >= growLevelMax) return;
-        //Check enough resources
+        if(!TryToSpendUgradeCost()) return;
 
         NextGrowLevel();
+
         if (growLevel >= growLevelMax) treeUIManager.SetGrowButtonShouldVisible(false);
+    }
+    private bool TryToSpendUgradeCost()
+    {
+        ResourceType resourceType = treeType.ugradeResourceType;
+
+        if (growLevel > treeType.upgradeResourceAmount.Length) return false;
+        float amount = treeType.upgradeResourceAmount[growLevel];
+
+        return ResourceManager.resourceData.TryToSpendResource(resourceType, amount);      
     }
     public void NextGrowLevel()
     {
-        //Substract resources
-        //Refresh resource values
-
         growLevel++;
+        IncreaseResourceValues();
+        RefreshSprites();
+        OnTreeUgrade?.Invoke();
+    }
+    private void IncreaseResourceValues()
+    {
+        resourceData.DuplicateResourceValues();      
+    }
+    private void RefreshSprites()
+    {
         int spriteIndex = growLevel - 1;
 
         treeSpriteController.SetSpriteIndex(spriteIndex);
