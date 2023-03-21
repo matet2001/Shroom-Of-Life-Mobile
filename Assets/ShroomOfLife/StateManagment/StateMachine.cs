@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -11,6 +12,18 @@ namespace StateManagment
         public void Start()
         {
             currentState.OnEnter();
+
+            SetUpEventTransitions();
+        }
+        private void SetUpEventTransitions()
+        {
+            foreach (State state in GetComponentsInChildren<State>())
+            {
+                if (state.TryGetComponent(out IEventTransition eventState))
+                {
+                    eventState.OnTransitionToThisState += TransitionEventToThisState;
+                }
+            }
         }
         public void Update()
         {
@@ -36,6 +49,21 @@ namespace StateManagment
 
                 ChangeState(state);
             }
+        }
+        private void TransitionEventToThisState(State triggeredState)
+        {
+            foreach (State state in currentState.stateTransitions)
+            {
+                if (state != triggeredState) continue;
+
+                TryChangeState(triggeredState);
+            }    
+        }
+        public void TryChangeState(State state)
+        {
+            if (state == currentState) return;
+
+            ChangeState(state);
         }
         public void ChangeState(State state)
         {
@@ -73,7 +101,7 @@ namespace StateManagment
     public abstract class GameState : State
     {
         public GameObject stateVirtualCamera;
-
+        
         public override void OnEnter()
         {
             stateVirtualCamera.SetActive(true);
@@ -81,6 +109,21 @@ namespace StateManagment
         public override void OnExit()
         {
             stateVirtualCamera.SetActive(false);
+        }  
+    }
+    public interface IEventTransition
+    {
+        public event Action<GameState> OnTransitionToThisState;
+
+        public void TriggerTransitionEvent();
+    }
+    public abstract class EventableState : GameState, IEventTransition
+    {
+        public event Action<GameState> OnTransitionToThisState;
+        
+        public void TriggerTransitionEvent()
+        {
+            OnTransitionToThisState?.Invoke(this);
         }
     }
 }

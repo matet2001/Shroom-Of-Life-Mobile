@@ -6,7 +6,7 @@ using Cinemachine;
 
 namespace StateManagment
 {
-    public class ConquerState : GameState
+    public class ConquerState : EventableState
     {
         public static event Action OnConquerStateEnter;
         public static event Action OnConquerStateExit;
@@ -17,8 +17,10 @@ namespace StateManagment
 
         private void Start()
         {
-            YarnCrosshairController.OnYarnCrosshairEnter += (Vector2 position) => SwitchToStopCamera(position);
-            YarnCrosshairController.OnYarnCrosshairExit += (Vector2 position) => SwitchToFollowCamera(position); 
+            YarnCrosshairController.OnYarnCrosshairEnter += (Vector2 position, float arcDistance) => SwitchToStopCamera(position);
+            YarnCrosshairController.OnYarnCrosshairExit += (Vector2 position) => SwitchToFollowCamera(position);
+
+            YarnMovementController.OnYarnStart += TriggerTransitionEvent;
         }
         public override void OnEnter()
         {
@@ -59,10 +61,6 @@ namespace StateManagment
         }
         public override bool TransitionToThisState()
         {
-            if (InputManager.IsMouseRightClick())
-            {
-                return true;
-            }
             return false;
         }
     }

@@ -1,3 +1,4 @@
+using StateManagment;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -5,7 +6,45 @@ using UnityEngine;
 
 public class ManagerCameraMovementController : MonoBehaviour
 {
-    public Transform cameraContainerTransform { private get; set; }
+    private Transform cameraContainerTransform;
+    private bool isManagerStateActive;
+    
+    private void Awake()
+    {
+        treePositionList = new List<Vector2>();
+        
+        ConnectionManager.OnTreeListChange += ResetTreeData;
+
+        ManagerState.OnManagerStateInit += ManagerState_OnManagerStateInit;
+        ManagerState.OnManagerStateEnter += ManagerStateEnter;
+        ManagerState.OnManagerStateExit += ManagerStateExit;
+    }
+    private void ManagerState_OnManagerStateInit(Transform containerTransform)
+    {
+        cameraContainerTransform = containerTransform;
+    }
+    private void Update()
+    {
+        MoveCamera();
+    }
+    private void MoveCamera()
+    {
+        if (!isManagerStateActive) return;
+        
+        if (InputManager.IsShiftHold()) JumpHorizontalMovement();
+        else SimpleHorizontalMovement();
+    }
+    private void ManagerStateEnter()
+    {
+        isManagerStateActive = true;
+        ResetCameraSpeed();
+    }
+    private void ManagerStateExit(Transform containerTransform)
+    {
+        isManagerStateActive = false;
+        ResetCamera();
+    }
+    #region Simple Camera Movemement
     [Header("Camera Rotation")]
     [SerializeField] float cameraRotationSpeedMin;
     [SerializeField] float cameraRotationSpeedMax;
@@ -16,33 +55,14 @@ public class ManagerCameraMovementController : MonoBehaviour
     [Header("Speed Reset")]
     [SerializeField] float cameraSpeedResetTimeMax;
     private float cameraSpeedResetTimer;
-
-    private List<Vector2> treePositionList;
-    [SerializeField] float minimumAngle;
-
-    private void Awake()
-    {
-        treePositionList = new List<Vector2>();
-        ConnectionManager.OnTreeListChange += ConnectionManager_OnTreeListChange;
-    }
-    private void ConnectionManager_OnTreeListChange(List<TreeController> treeList)
-    {
-        treePositionList = new List<Vector2>();
-        treeList.ForEach(x => treePositionList.Add(x.transform.position));
-    }
-    public void MoveCamera()
-    {
-        if (InputManager.IsShiftHold()) JumpHorizontalMovement();
-        else SimpleHorizontalMovement();
-    }
-    #region SimpleCameraMovemement
+   
     private void SimpleHorizontalMovement()
     {
         float horizontalInput = InputManager.GetHorizontalAxis();
-        float containerCurrentZRotation = cameraContainerTransform.transform.localEulerAngles.z;
+        float containerCurrentZRotation = cameraContainerTransform.localEulerAngles.z;
         containerCurrentZRotation += horizontalInput * Time.deltaTime * cameraRotationSpeed * -1f;
 
-        cameraContainerTransform.transform.localEulerAngles = new Vector3(0f, 0f, containerCurrentZRotation);
+        cameraContainerTransform.localEulerAngles = new Vector3(0f, 0f, containerCurrentZRotation);
 
         if (horizontalInput != 0) IncreaseSpeedOverTime();
         else ResetCameraSpeed();
@@ -60,7 +80,7 @@ public class ManagerCameraMovementController : MonoBehaviour
             cameraRotationSpeed = Mathf.Lerp(cameraRotationSpeedMin, cameraRotationSpeedMax, t);
         }
     }
-    public void ResetCameraSpeed()
+    private void ResetCameraSpeed()
     {
         if (cameraSpeedResetTimeMax <= cameraSpeedResetTimer)
         {
@@ -69,12 +89,15 @@ public class ManagerCameraMovementController : MonoBehaviour
         }
         else cameraSpeedResetTimer += Time.deltaTime;
     }
-    public void ResetCamera()
+    private void ResetCamera()
     {
-        cameraContainerTransform.transform.localEulerAngles = Vector3.zero;
+        cameraContainerTransform.localEulerAngles = Vector3.zero; 
     }
     #endregion
     #region Jump Horizontal Movement
+    private List<Vector2> treePositionList;
+    [SerializeField] float minimumAngle;
+    
     private void JumpHorizontalMovement()
     {
         if (treePositionList.Count == 0) return;
@@ -103,6 +126,10 @@ public class ManagerCameraMovementController : MonoBehaviour
         }
 
         cameraContainerTransform.transform.localEulerAngles += new Vector3(0f, 0f, closestAngle);
+    }
+    private void ResetTreeData(TreeController treeController)
+    {
+        treePositionList.Add(treeController.transform.position);
     }
     #endregion
 }

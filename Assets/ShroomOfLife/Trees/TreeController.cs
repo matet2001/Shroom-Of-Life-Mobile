@@ -3,21 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-
 public class TreeController : MonoBehaviour
 {
-    public static event Action<TreeController> OnTreeCollision;
-    public static event Action OnTreeUgrade;
-
-    [SerializeField] TreeUIManager treeUIManager;
-    [SerializeField] TreeCollider treeCollisionManager;
-    [SerializeField] TreeSpriteController treeSpriteController;
-
-    [SerializeField] TreeType treeType;
+    public TreeType treeType;
     public TreeResourceData resourceData { get; private set; }
-
-    private int growLevel = 0;
-    private readonly int growLevelMax = 3;
 
     private void Awake()
     {
@@ -25,48 +14,71 @@ public class TreeController : MonoBehaviour
     }
     private void Start()
     {
-        treeSpriteController.SetTreeSprites(treeType);
-        NextGrowLevel();
+        SetUpSprite();
+        SubscriptToEvents();
 
+        treeUIManager.SetGrowCostText(treeType.upgradeResourceCost[growLevel].amount);
+    }
+    private void SubscriptToEvents()
+    {
         treeUIManager.OnGrowButtonPressed += TryToGrow;
-
         treeCollisionManager.OnYarnCollided += delegate () { OnTreeCollision?.Invoke(this); };
-    }   
+    }
+    #region Manage Collider and Visual
+    public static event Action<TreeController> OnTreeCollision;
+
+    [SerializeField] TreeVisualController treeSpriteController;
+    [SerializeField] TreeCollider treeCollisionManager;
+
+    private void SetUpSprite()
+    {
+        treeSpriteController.SetTreeSprites(treeType);
+        RefreshSprites();
+    }
+    private void RefreshSprites()
+    {
+        treeSpriteController.SetSpriteIndex(growLevel);
+        treeCollisionManager.ResetCollider();
+    }
+    #endregion
+    #region Grow
+    public static event Action<TreeController> OnTreeGrow;
+
+    public int growLevel { private set; get;}
+    private readonly int growLevelMax = 3;
+
     private void TryToGrow()
     {
-        if (growLevel >= growLevelMax) return;
+        if (growLevel >= growLevelMax - 1) return;
         if(!TryToSpendUgradeCost()) return;
 
         NextGrowLevel();
 
-        if (growLevel >= growLevelMax) treeUIManager.SetGrowButtonShouldVisible(false);
+        bool shouldShowUI = growLevel < growLevelMax - 1;
+        treeUIManager.SetGrowButtonShouldVisible(shouldShowUI);
+
+        if(!shouldShowUI) return;
+        treeUIManager.SetGrowCostText(treeType.upgradeResourceCost[growLevel].amount);
     }
     private bool TryToSpendUgradeCost()
     {
-        ResourceType resourceType = treeType.ugradeResourceType;
-
-        if (growLevel > treeType.upgradeResourceAmount.Length) return false;
-        float amount = treeType.upgradeResourceAmount[growLevel];
-
-        return ResourceManager.resourceData.TryToSpendResource(resourceType, amount);      
+        return ResourceManager.Instance.TryToSpendResource(treeType.upgradeResourceCost[growLevel]);
     }
-    public void NextGrowLevel()
+    private void NextGrowLevel()
     {
         growLevel++;
         IncreaseResourceValues();
         RefreshSprites();
-        OnTreeUgrade?.Invoke();
+        OnTreeGrow?.Invoke(this);
     }
     private void IncreaseResourceValues()
     {
         resourceData.DuplicateResourceValues();      
     }
-    private void RefreshSprites()
-    {
-        int spriteIndex = growLevel - 1;
+    #endregion
+    #region Manage UI
+    [SerializeField] TreeUIManager treeUIManager;
 
-        treeSpriteController.SetSpriteIndex(spriteIndex);
-        treeCollisionManager.ResetCollider();
-    }
     public TreeUIManager GetTreeUIManager() => treeUIManager;
+    #endregion
 }

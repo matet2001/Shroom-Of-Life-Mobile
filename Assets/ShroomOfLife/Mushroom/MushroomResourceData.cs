@@ -5,29 +5,19 @@ using UnityEngine;
 
 public class MushroomResourceData : ResourceData
 {
-    public Dictionary<ResourceType, float> resourceUse;
 
-    //Fill resource amount from resource data type
-    public MushroomResourceData(MushroomResourceDataType resourceDataType) : base(resourceDataType)
+    public MushroomResourceData(MushroomResourceDataType resourceDataType)
     {
         Initialize(resourceDataType);
     }
-    public void Initialize(MushroomResourceDataType resourceDataType)
+    private void Initialize(MushroomResourceDataType resourceDataType)
     {
         SetUpResources();
 
-        ResourceTypeContainer resourceTypeContainer = Resources.Load<ResourceTypeContainer>("ResourceTypeContainer");
-        resourceTypes = resourceTypeContainer.resourceTypes.ToList();
-
         foreach (ResourceType resourceType in resourceTypes)
         {
-            resourceUse[resourceType] = resourceDataType.resourceUse.Find(x => x.resourceType == resourceType).amount;
-            resourceMax[resourceType] = resourceDataType.resourceMax.Find(x => x.resourceType == resourceType).amount;
+            resourceUse[resourceType] = resourceDataType.resourceUse.Find(x => x.type == resourceType).amount;
+            resourceMax[resourceType] = resourceDataType.resourceMax.Find(x => x.type == resourceType).amount;
         }
-    }
-    protected override void SetUpResources()
-    {
-        resourceUse = new Dictionary<ResourceType, float>();
-        resourceMax = new Dictionary<ResourceType, float>();
     }
 }

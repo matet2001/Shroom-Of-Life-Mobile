@@ -6,34 +6,36 @@ using UnityEngine;
 [RequireComponent(typeof(Collider2D))]
 public class ResourceNodeCollider : Collidable
 {
-    [SerializeField] ResourceAmount resourceAmount;
-
-    private SpriteRenderer spriteRenderer;
-    private new Collider2D collider;
-    public float alpha, disappeareTime = 2f, timeElapsed;
-    public bool shouldDisappeare;
+    [SerializeField] ResourceUnit resourceUnit;
+    [SerializeField] float sizeMultiplier = 1f;
 
     private void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
         collider = GetComponent<Collider2D>();
     }
+    public override void Collision()
+    {
+        base.Collision();
+        ResourceManager.Instance.TryToAddResource(resourceUnit);
+        StartDisappeare();
+    }
     private void Update()
     {
         SetScaleBasedOnResourceAmount();
         Disappeare();
-    }
+    }   
     private void SetScaleBasedOnResourceAmount()
     {
-        float amount = resourceAmount.amount / 10f;
+        float amount = resourceUnit.amount / sizeMultiplier;
         transform.localScale = new Vector3(amount, amount, 1);
     }
-    public override void Collision()
-    {
-        base.Collision();
-        ResourceManager.resourceData.TryToAddResource(resourceAmount);
-        StartDisappeare();
-    }
+    #region Disappeare
+    private SpriteRenderer spriteRenderer;
+    private new Collider2D collider;
+    private float alpha, disappeareTime = 2f, timeElapsed;
+    private bool shouldDisappeare;
+    
     private void Disappeare()
     {
         if (!shouldDisappeare) return;
@@ -55,4 +57,5 @@ public class ResourceNodeCollider : Collidable
         shouldDisappeare = true;
         alpha = spriteRenderer.color.a;
     }
+    #endregion
 }

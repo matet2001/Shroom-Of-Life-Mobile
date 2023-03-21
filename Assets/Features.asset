@@ -1,0 +1,137 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0a89affcc32cc142ae531605f86bfbb, type: 3}
+  m_Name: Features
+  m_EditorClassIdentifier: 
+  snap: 1
+  snapSize: 10
+  snapColor: {r: 0, g: 0, b: 0, a: 0.1}
+  noteWindowRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 640
+    height: 586
+  scrollPosition: {x: 0, y: 64}
+  windows:
+  - className: Header-14273
+    type: 1
+    id: 14273
+    moveHandleActive: 0
+    sizeHandleActive: 0
+    arrowHandleActive: 0
+    rect:
+      serializedVersion: 2
+      x: 200
+      y: 140
+      width: 110
+      height: 40
+    windowMinSize: {x: 100, y: 30}
+    windowMaxSize: {x: 500, y: 100}
+    connects: []
+    header:
+      header: Features
+      fontStyle: 0
+      fontSize: 15
+      fontColor: {r: 1, g: 1, b: 1, a: 1}
+      backgroundColor: {r: 0, g: 0, b: 0, a: 0.3}
+    textArea:
+      text: Text
+      fontStyle: 0
+      fontSize: 15
+      fontColor: {r: 1, g: 1, b: 1, a: 1}
+    todoList:
+      items:
+      - active: 0
+        text: 
+      header: 0
+      headerText: Header
+    colorVariable:
+      hexCode: FFFFFF
+      color: {r: 1, g: 1, b: 1, a: 1}
+      RGBAtoHex: 0
+    imageVariable:
+      imagePath: 
+      scaleMode: 0
+      alphaBlend: 1
+      color: {r: 1, g: 1, b: 1, a: 1}
+    vectorVariable:
+      type: 0
+      header: 
+      vector2: {x: 0, y: 0}
+      vector3: {x: 0, y: 0, z: 0}
+      vector4: {x: 0, y: 0, z: 0, w: 0}
+  - className: TodoList-86033
+    type: 3
+    id: 86033
+    moveHandleActive: 0
+    sizeHandleActive: 0
+    arrowHandleActive: 0
+    rect:
+      serializedVersion: 2
+      x: 170
+      y: 210
+      width: 170
+      height: 76
+    windowMinSize: {x: 150, y: 50}
+    windowMaxSize: {x: 0, y: 0}
+    connects:
+    - id: 14273
+      rect:
+        serializedVersion: 2
+        x: 225
+        y: 174.5
+        width: 60
+        height: 40
+      moveHandleActive: 0
+      label: 0
+      startArrow: 0
+      endArrow: 1
+      labelText: 
+      offset: {x: 0, y: 0}
+      color: {r: 1, g: 1, b: 1, a: 1}
+    header:
+      header: Header
+      fontStyle: 0
+      fontSize: 15
+      fontColor: {r: 1, g: 1, b: 1, a: 1}
+      backgroundColor: {r: 0, g: 0, b: 0, a: 0.3}
+    textArea:
+      text: Text
+      fontStyle: 0
+      fontSize: 15
+      fontColor: {r: 1, g: 1, b: 1, a: 1}
+    todoList:
+      items:
+      - active: 1
+        text: Manage Die
+      - active: 1
+        text: 'Manage Win '
+      - active: 1
+        text: Make ui timer for refresh
+      header: 0
+      headerText: Header
+    colorVariable:
+      hexCode: FFFFFF
+      color: {r: 1, g: 1, b: 1, a: 1}
+      RGBAtoHex: 0
+    imageVariable:
+      imagePath: 
+      scaleMode: 0
+      alphaBlend: 1
+      color: {r: 1, g: 1, b: 1, a: 1}
+    vectorVariable:
+      type: 0
+      header: 
+      vector2: {x: 0, y: 0}
+      vector3: {x: 0, y: 0, z: 0}
+      vector4: {x: 0, y: 0, z: 0, w: 0}

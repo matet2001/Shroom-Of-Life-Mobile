@@ -21,7 +21,7 @@ MonoBehaviour:
     y: 0
     width: 1020
     height: 694
-  scrollPosition: {x: 212.70882, y: 184.5}
+  scrollPosition: {x: 186.45161, y: 60}
   windows:
   - className: Header-67216
     type: 1

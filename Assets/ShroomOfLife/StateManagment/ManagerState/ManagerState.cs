@@ -5,55 +5,37 @@ using UnityEngine;
 
 namespace StateManagment
 {
-    public class ManagerState : GameState
-    { 
+    public class ManagerState : EventableState
+    {
+        public static event Action<Transform> OnManagerStateInit;
         public static event Action OnManagerStateEnter;
-        public static event Action<Transform> OnManagerStateExit;
-        
-        private bool isCollisionHappened;
-
-        private ManagerCameraMovementController cameraMovementController;
-        private ManagerCameraDistanceChecker distanceChecker;
+        public static event Action<Transform> OnManagerStateExit;      
 
         [SerializeField] Transform cameraContainerTransform;
        
         private void Start()
         {
-            Collidable.OnCollidableCollision += EnterManagmentState;
+            Collidable.OnCollidableCollision += TriggerTransitionEvent;
+            YarnMovementController.OnRunOutOfYarnResource += TriggerTransitionEvent;
 
-            cameraMovementController = GetComponentInChildren<ManagerCameraMovementController>();
-            distanceChecker = GetComponentInChildren<ManagerCameraDistanceChecker>();
-
-            cameraMovementController.cameraContainerTransform = cameraContainerTransform;
-            distanceChecker.cameraContainerTransform = cameraContainerTransform;
+            OnManagerStateInit?.Invoke(cameraContainerTransform);
         }
         public override void OnEnter()
         {
             base.OnEnter();
             OnManagerStateEnter?.Invoke();
-
-            cameraMovementController.ResetCameraSpeed();
         }
         public override void OnUpdate()
         {
-            cameraMovementController.MoveCamera();
-            distanceChecker.CheckDistanceFromTrees();
+           
         }            
         public override void OnExit()
         {
             base.OnExit();
             OnManagerStateExit?.Invoke(cameraContainerTransform);
-            
-            cameraMovementController.ResetCamera();
-            isCollisionHappened = false;
-        }
-        private void EnterManagmentState()
-        {
-            isCollisionHappened = true;
-        }
+        }      
         public override bool TransitionToThisState()
         {
-            if (isCollisionHappened) return true;
             if (Input.GetKeyDown(KeyCode.Q))
             {
                 return true;

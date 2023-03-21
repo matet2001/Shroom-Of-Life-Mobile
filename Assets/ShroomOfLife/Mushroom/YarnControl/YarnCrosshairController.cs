@@ -7,17 +7,6 @@ public class YarnCrosshairController : MonoBehaviour
 {
     [SerializeField] YarnMovementController yarnMovementController;
     
-    public float arcDistace;
-    
-    public static event Action<Vector2> OnYarnCrosshairEnter;
-    public static event Action<Vector2> OnYarnCrosshairExit;
-
-    private bool isYarnInArc;
-    private Vector2 cursorPositionOld;
-    [SerializeField] float cursorMovingTimer;
-    [SerializeField] float cursorMovingTimerMax;
-    [SerializeField] bool isCursorMoving = true;
-
     private void Update()
     {
         SetPosition();
@@ -27,6 +16,17 @@ public class YarnCrosshairController : MonoBehaviour
     {
         transform.position = InputManager.GetMouseWorldPosition();
     }
+    #region Arc Move
+    public static event Action<Vector2, float> OnYarnCrosshairEnter;
+    public static event Action<Vector2> OnYarnCrosshairExit;
+
+    [SerializeField] float arcDistace;
+    private bool isYarnInArc;
+    private Vector2 cursorPositionOld;
+    [SerializeField] float cursorMovingTimer;
+    [SerializeField] float cursorMovingTimerMax;
+    [SerializeField] bool isCursorMoving = true;
+    
     private void ManageYarnInArc()
     {
         SetIsCursorMoving();
@@ -36,7 +36,7 @@ public class YarnCrosshairController : MonoBehaviour
         {
             isYarnInArc = true;
             //Switch to stop camera
-            OnYarnCrosshairEnter?.Invoke(InputManager.GetMouseWorldPosition());
+            OnYarnCrosshairEnter?.Invoke(InputManager.GetMouseWorldPosition(), arcDistace);
         }
         
         if (isYarnInArc && (!isCloser || isCursorMoving))
@@ -74,4 +74,5 @@ public class YarnCrosshairController : MonoBehaviour
     //{
     //    Gizmos.DrawWireSphere(transform.position, arcDistace);
     //}
+    #endregion
 }

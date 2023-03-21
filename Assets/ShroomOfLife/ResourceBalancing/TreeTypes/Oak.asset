@@ -13,28 +13,35 @@ MonoBehaviour:
   m_Name: Oak
   m_EditorClassIdentifier: 
   resourceMax:
-  - resourceType: {fileID: 11400000, guid: 00b7c9e9ae1a9e746a2588220c6a7a99, type: 2}
+  - type: {fileID: 11400000, guid: 00b7c9e9ae1a9e746a2588220c6a7a99, type: 2}
     amount: 5
-  - resourceType: {fileID: 11400000, guid: f2c7e2e086190e949a7f3e085c0b121d, type: 2}
-    amount: 10
-  - resourceType: {fileID: 11400000, guid: 2135960d4f6d7754289627f8bc0baaf0, type: 2}
-    amount: 20
-  resourceProduce:
-  - resourceType: {fileID: 11400000, guid: 00b7c9e9ae1a9e746a2588220c6a7a99, type: 2}
-    amount: 0
-  - resourceType: {fileID: 11400000, guid: f2c7e2e086190e949a7f3e085c0b121d, type: 2}
-    amount: 3
-  - resourceType: {fileID: 11400000, guid: 2135960d4f6d7754289627f8bc0baaf0, type: 2}
+  - type: {fileID: 11400000, guid: f2c7e2e086190e949a7f3e085c0b121d, type: 2}
     amount: 25
-  ugradeResourceType: {fileID: 11400000, guid: f2c7e2e086190e949a7f3e085c0b121d, type: 2}
-  upgradeResourceAmount:
-  - 0
-  - 10
-  - 15
+  - type: {fileID: 11400000, guid: 2135960d4f6d7754289627f8bc0baaf0, type: 2}
+    amount: 100
+  resourceProduce:
+  - type: {fileID: 11400000, guid: 00b7c9e9ae1a9e746a2588220c6a7a99, type: 2}
+    amount: 0
+  - type: {fileID: 11400000, guid: f2c7e2e086190e949a7f3e085c0b121d, type: 2}
+    amount: 2
+  - type: {fileID: 11400000, guid: 2135960d4f6d7754289627f8bc0baaf0, type: 2}
+    amount: 10
+  resourceUse:
+  - type: {fileID: 11400000, guid: 00b7c9e9ae1a9e746a2588220c6a7a99, type: 2}
+    amount: 1
+  - type: {fileID: 11400000, guid: f2c7e2e086190e949a7f3e085c0b121d, type: 2}
+    amount: 0
+  - type: {fileID: 11400000, guid: 2135960d4f6d7754289627f8bc0baaf0, type: 2}
+    amount: 0
+  upgradeResourceCost:
+  - type: {fileID: 11400000, guid: f2c7e2e086190e949a7f3e085c0b121d, type: 2}
+    amount: 10
+  - type: {fileID: 11400000, guid: f2c7e2e086190e949a7f3e085c0b121d, type: 2}
+    amount: 15
   treeSprites:
-  - treeSprite: {fileID: 21300000, guid: b560e37431aec544981f3dc9e2418627, type: 3}
-    rootSprite: {fileID: 21300000, guid: 46267a7276ec94447b5f6bd58a5bde08, type: 3}
-  - treeSprite: {fileID: 21300000, guid: bd43772f787530747b0d73d4d5511048, type: 3}
-    rootSprite: {fileID: 21300000, guid: 9476c78600026124eafae0e759d9184c, type: 3}
   - treeSprite: {fileID: 21300000, guid: 53ce14f7a66f1854a9d9f122742a88c3, type: 3}
     rootSprite: {fileID: 21300000, guid: e8bbea84b6d150041a99fcf018fda1cd, type: 3}
+  - treeSprite: {fileID: 21300000, guid: bd43772f787530747b0d73d4d5511048, type: 3}
+    rootSprite: {fileID: 21300000, guid: 9476c78600026124eafae0e759d9184c, type: 3}
+  - treeSprite: {fileID: 21300000, guid: b560e37431aec544981f3dc9e2418627, type: 3}
+    rootSprite: {fileID: 21300000, guid: 46267a7276ec94447b5f6bd58a5bde08, type: 3}

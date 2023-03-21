@@ -11,6 +11,7 @@ public class InputManager : MonoBehaviour
         cursorSprite = Resources.Load("Cursor") as Texture2D;
         Cursor.SetCursor(cursorSprite, Vector2.zero, CursorMode.Auto);
     }
+    #region Mouse Input
     public static Vector2 GetMouseWorldPosition()
     {
         Vector3 vec = Camera.main.ScreenToWorldPoint(Input.mousePosition);
@@ -21,9 +22,13 @@ public class InputManager : MonoBehaviour
         return Input.mousePosition;
     }
     public static bool IsMouseRightClick() => Input.GetMouseButton(1);
+    public static bool IsMouseRightClickPressed() => Input.GetMouseButtonDown(1);
     public static bool IsMouseLeftClick() => Input.GetMouseButton(0);
+    #endregion
+    #region Keyboard Input
     public static float GetHorizontalAxis() => Input.GetAxis("Horizontal");
     public static bool IsShiftHold() => Input.GetKey(KeyCode.LeftShift);
     public static bool IsRightMovementKeyPressed() => Input.GetKeyDown(KeyCode.D);
     public static bool IsLeftMovementKeyPressed() => Input.GetKeyDown(KeyCode.A);
+    #endregion
 }

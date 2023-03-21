@@ -1,3 +1,4 @@
+using NaughtyAttributes;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -6,28 +7,26 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "TreeTypeSO", menuName = "ScriptableObjects/Tree/TreeType")]
 public class TreeType : ResourceDataType
 {
-    public List<ResourceAmount> resourceProduce;
+    public List<ResourceUnit> resourceProduce;
+    public List<ResourceUnit> resourceUse;
 
-    public ResourceType ugradeResourceType;
-    public float[] upgradeResourceAmount;
-
+    public ResourceUnit[] upgradeResourceCost;
     public TreeSprite[] treeSprites = new TreeSprite[3];
 
-    public override void ReBuild()
+    [ContextMenu("Rebuild")]
+    public void ReBuild()
     {
         ResourceTypeContainer resourceTypeContainer = Resources.Load<ResourceTypeContainer>("ResourceTypeContainer");
 
-        resourceProduce = new List<ResourceAmount>();
-        resourceMax = new List<ResourceAmount>();
-
-        upgradeResourceAmount = new float[3];
-
-        treeSprites = new TreeSprite[3];    
+        resourceUse = new List<ResourceUnit>();
+        resourceProduce = new List<ResourceUnit>();
+        resourceMax = new List<ResourceUnit>();  
 
         foreach (ResourceType resourceType in resourceTypeContainer.resourceTypes)
         {
-            ResourceAmount currentResourceAmount = new ResourceAmount(resourceType);
+            ResourceUnit currentResourceAmount = new ResourceUnit(resourceType);
 
+            resourceUse.Add(currentResourceAmount);
             resourceProduce.Add(currentResourceAmount);
             resourceMax.Add(currentResourceAmount);
         }
