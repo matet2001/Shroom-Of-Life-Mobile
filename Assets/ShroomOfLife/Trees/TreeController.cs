@@ -50,7 +50,11 @@ public class TreeController : MonoBehaviour
     private void TryToGrow()
     {
         if (growLevel >= growLevelMax - 1) return;
-        if(!TryToSpendUgradeCost()) return;
+        if (!TryToSpendUgradeCost())
+        {
+            JuiceTextCreator.CreateJuiceText(transform.position, "You don't have enough \n material to grow", "BasicTextSO");
+            return;
+        }
 
         NextGrowLevel();
 

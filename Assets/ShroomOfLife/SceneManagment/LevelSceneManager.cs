@@ -10,4 +10,9 @@ public class LevelSceneManager : MonoBehaviour
         int sceneBuildIndex = SceneManager.GetActiveScene().buildIndex;
         SceneManager.LoadScene(sceneBuildIndex);
     }
+    public static void NextScene()
+    {
+        int sceneBuildIndex = SceneManager.GetActiveScene().buildIndex;
+        SceneManager.LoadScene(sceneBuildIndex + 1);
+    }
 }

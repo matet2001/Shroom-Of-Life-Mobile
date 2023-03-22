@@ -21,6 +21,8 @@ public class ResourceRefreshTimer : MonoBehaviour
         LoseState.OnLoseGame += ManageGameEnd;
 
         refreshTimeMax = refreshTimer;
+
+        resourceTimerUIController.GetButton().onClick.AddListener(SkipCountdown);
     }
     private void Update()
     {
@@ -41,6 +43,10 @@ public class ResourceRefreshTimer : MonoBehaviour
             OnResourceRefresh?.Invoke();
         }
         else refreshTimer -= Time.deltaTime;
+    }
+    public void SkipCountdown()
+    {
+        refreshTimer = 0;
     }
     private void SetUI() => resourceTimerUIController.SetTimerText(refreshTimer);
     private void ManageGameEnd()

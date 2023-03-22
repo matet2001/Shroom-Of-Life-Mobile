@@ -11,13 +11,14 @@ public class ConnectionManager : MonoBehaviour
     public static event Action<TreeController> OnTreeListChange;
     public static event Action<MushroomController> OnMushroomListChange;
 
+    public static event Action<List<TreeController>, List<MushroomController>> OnConnectionListInit;
+
     public List<TreeController> treeControllerList;
     public List<MushroomController> mushroomControllerList;
     
     private void Start()
     {
-        //OnTreeListChange?.Invoke(treeControllerList);
-        //OnMushroomListChange?.Invoke(mushroomControllerList);
+        OnConnectionListInit?.Invoke(treeControllerList, mushroomControllerList);
 
         TreeController.OnTreeCollision += (treeController) => AddTreeToList(treeController);
         GlobeCollider.OnYarnExitGlobe += GlobeCollider_OnYarnExitGlobe;

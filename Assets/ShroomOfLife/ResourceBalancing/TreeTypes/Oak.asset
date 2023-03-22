@@ -23,9 +23,9 @@ MonoBehaviour:
   - type: {fileID: 11400000, guid: 00b7c9e9ae1a9e746a2588220c6a7a99, type: 2}
     amount: 0
   - type: {fileID: 11400000, guid: f2c7e2e086190e949a7f3e085c0b121d, type: 2}
-    amount: 2
+    amount: 5
   - type: {fileID: 11400000, guid: 2135960d4f6d7754289627f8bc0baaf0, type: 2}
-    amount: 10
+    amount: 20
   resourceUse:
   - type: {fileID: 11400000, guid: 00b7c9e9ae1a9e746a2588220c6a7a99, type: 2}
     amount: 1
@@ -35,9 +35,9 @@ MonoBehaviour:
     amount: 0
   upgradeResourceCost:
   - type: {fileID: 11400000, guid: f2c7e2e086190e949a7f3e085c0b121d, type: 2}
-    amount: 10
-  - type: {fileID: 11400000, guid: f2c7e2e086190e949a7f3e085c0b121d, type: 2}
     amount: 15
+  - type: {fileID: 11400000, guid: f2c7e2e086190e949a7f3e085c0b121d, type: 2}
+    amount: 30
   treeSprites:
   - treeSprite: {fileID: 21300000, guid: 53ce14f7a66f1854a9d9f122742a88c3, type: 3}
     rootSprite: {fileID: 21300000, guid: e8bbea84b6d150041a99fcf018fda1cd, type: 3}

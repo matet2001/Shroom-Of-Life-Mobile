@@ -33,6 +33,7 @@ public class ResourceManager : MonoBehaviour
     {
         TreeController.OnTreeGrow += ManageTreeGrow;
 
+        ConnectionManager.OnConnectionListInit += ConnectionInit;
         ConnectionManager.OnTreeListChange += AddTreeToList;
         ConnectionManager.OnMushroomListChange += AddMushroomToList;
 
@@ -74,6 +75,11 @@ public class ResourceManager : MonoBehaviour
         }
 
         OnResourceAmountMaxChange?.Invoke(resourceData.resourceMax);
+    }
+    private void ConnectionInit(List<TreeController> treeList, List<MushroomController> mushroomList)
+    {
+        treeList.ForEach(tree => AddTreeToList(tree));
+        mushroomList.ForEach(mushroom => AddMushroomToList(mushroom));
     }
     private void AddTreeToList(TreeController treeController)
     {
@@ -146,8 +152,7 @@ public class ResourceManager : MonoBehaviour
 
         if (resourceData.TryToSpendResource(resourceUnit)) return;
 
-        //Die
-        Debug.Log("Died");
+        OnLoseGame?.Invoke();
     }
     public bool TryToSpendResource(ResourceUnit resourceUnit)
     {
@@ -156,7 +161,7 @@ public class ResourceManager : MonoBehaviour
 
         if (isSpent) return true;
 
-        Debug.Log("Can't spent resource : " + resourceUnit);
+        Debug.Log("Can't spent resource : " + resourceUnit.type);
         return false;
     }
     #endregion
@@ -176,7 +181,7 @@ public class ResourceManager : MonoBehaviour
         
         if (isAdded) return true;
 
-        Debug.Log("Can't add, max reached for " + resourceUnit);
+        Debug.Log("Can't add, max reached for " + resourceUnit.type);
         return false;
     }
     #endregion

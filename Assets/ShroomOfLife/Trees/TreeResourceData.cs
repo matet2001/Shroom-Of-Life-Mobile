@@ -33,6 +33,7 @@ public class TreeResourceData : ResourceData
     {
         foreach (ResourceType resourceType in resourceTypes)
         {
+            resourceUse[resourceType] *= 2;
             resourceProduce[resourceType] *= 2;
             resourceMax[resourceType] *= 2;
         }

@@ -10,7 +10,6 @@ public class YarnMovementController : MonoBehaviour
     private void Awake()
     {
         yarnTrailPrefab = Resources.Load<Transform>("pfYarnTrail");
-        startPosition = transform.position;
     }
     private void Start()
     {
@@ -18,68 +17,25 @@ public class YarnMovementController : MonoBehaviour
     }
     private void Update()
     {
-        TryToStartYarn();
         ManageMovement();
     }
     private void SubscribeToEvents()
     {
         WinState.OnWinGame += ManageGameEnd;
         LoseState.OnLoseGame += ManageGameEnd;
+        
         ConquerState.OnConquerStateExit += StopMoving;
 
-        ManagerState.OnManagerStateExit += SetClosestPoint;
+        MushroomController.OnTryToStartYarn += TryToStartYarn;
 
         YarnCrosshairController.OnYarnCrosshairEnter += StartArcMovement;
         YarnCrosshairController.OnYarnCrosshairExit += delegate (Vector2 position) { shouldMoveOnArc = false; };
-
-        ConnectionManager.OnMushroomListChange += GetMushroomPositionData;
     }
     private void OnDestroy()
     {
         WinState.OnWinGame -= ManageGameEnd;
         LoseState.OnLoseGame -= ManageGameEnd;
         ConquerState.OnConquerStateExit -= StopMoving;
-        ManagerState.OnManagerStateExit -= SetClosestPoint;
-    }
-    #endregion
-    #region Get Start Point
-    private List<Vector2> mushroomBottonPositions = new List<Vector2>();
-    private Vector2 startPosition;
-    
-    private void GetMushroomPositionData(MushroomController mushroomController)
-    {
-        mushroomBottonPositions.Add(mushroomController.GetYarnStartPosition());
-    }
-    private void SetClosestPoint(Transform containerTransform)
-    {
-        startPosition = GetClosestMushroomBottomPoint(containerTransform);
-        transform.position = startPosition;
-    }
-    private Vector2 GetClosestMushroomBottomPoint(Transform containerTransform)
-    {
-        if (mushroomBottonPositions.Count == 0) return startPosition;
-
-        Vector2 closestMushroomBottomPoint = Vector2.zero;
-        float closestAngle = Mathf.Infinity;
-        bool isAnyMushroomFound = false;
-
-        foreach (Vector2 mushroomBottomPoint in mushroomBottonPositions)
-        {
-            float angle = Vector2.Angle(containerTransform.up, mushroomBottomPoint);
-
-            if (angle < closestAngle)
-            {
-                closestAngle = angle;
-                closestMushroomBottomPoint = mushroomBottomPoint;
-                isAnyMushroomFound = true;
-            }
-        }
-
-        if (isAnyMushroomFound)
-        {
-            return closestMushroomBottomPoint;
-        } 
-        return startPosition;
     }
     #endregion
     #region Manage Movement
@@ -91,31 +47,28 @@ public class YarnMovementController : MonoBehaviour
 
     public static event Action OnYarnStart;
     
-    private void TryToStartYarn()
+    public void TryToStartYarn(Vector3 startPosition)
     {
         if (isGameEnded) return;
         if (shouldMoveYarn) return;
-        if (!InputManager.IsMouseRightClickPressed()) return;
-
         if (!ResourceManager.resourceData.CanSpendResource(idleMovementCost))
         {
             JuiceTextCreator.CreateJuiceText(transform.position, "You don't have enough \n energy to start yarn", "BasicTextSO");
             return;
         } 
 
-        StartYarn();
+        StartYarn(startPosition);
     }
-    private void StartYarn()
+    private void StartYarn(Vector3 startPosition)
     {
         shouldMoveYarn = true;
-        currentYarnTrail = Instantiate(yarnTrailPrefab, transform.position, Quaternion.identity, transform);
+        currentYarnTrail = Instantiate(yarnTrailPrefab, startPosition, Quaternion.identity, transform);
         OnYarnStart?.Invoke();
     }
     private void StopMoving()
     {
         shouldMoveYarn = false;
         DetacheYarn();
-        transform.position = startPosition;
     }
     private void DetacheYarn()
     {

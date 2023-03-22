@@ -8,16 +8,26 @@ public class GameEndTextUIManager : MonoBehaviour
 {
     [SerializeField] TextMeshProUGUI winText;
     [SerializeField] TextMeshProUGUI loseText;
+    [SerializeField] GameObject otherUI;
 
     private void Start()
     {
         WinState.OnWinGame += RevealWinText;
         LoseState.OnLoseGame += RevealLoseText;
 
+        otherUI.SetActive(false);
         winText.gameObject.SetActive(false);
         loseText.gameObject.SetActive(false);
     }
 
-    private void RevealWinText() => winText.gameObject.SetActive(true);
-    private void RevealLoseText() => loseText.gameObject.SetActive(true);
+    private void RevealWinText()
+    {
+        otherUI.SetActive(true);
+        winText.gameObject.SetActive(true);
+    }
+    private void RevealLoseText()
+    {
+        otherUI.SetActive(true);
+        loseText.gameObject.SetActive(true);
+    }
 }

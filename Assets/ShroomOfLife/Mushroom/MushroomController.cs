@@ -1,6 +1,9 @@
+using StateManagment;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class MushroomController : MonoBehaviour
 {
@@ -8,6 +11,9 @@ public class MushroomController : MonoBehaviour
     [SerializeField] MushroomResourceDataType resourceDataType;
 
     [SerializeField] Transform yarnStartPoint;
+
+    [SerializeField] Button startButton;
+    public static event Action<Vector3> OnTryToStartYarn;
 
     public static MushroomController CreateMushroom(Vector2 createPosition)
     {
@@ -19,5 +25,14 @@ public class MushroomController : MonoBehaviour
     {
         resourceData = new MushroomResourceData(resourceDataType);
     }
-    public Vector2 GetYarnStartPosition() => yarnStartPoint.position;
+    private void Start()
+    {
+        ConquerState.OnConquerStateEnter += HideStartButton;
+    }
+    public void TryToStartYarn()
+    {
+        OnTryToStartYarn?.Invoke(yarnStartPoint.position);
+    }
+    private void HideStartButton() => SetStartButtonActive(false);
+    public void SetStartButtonActive(bool active) => startButton.gameObject.SetActive(active);
 }
