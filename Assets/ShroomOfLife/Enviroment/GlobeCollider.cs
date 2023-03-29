@@ -5,9 +5,9 @@ using UnityEngine;
 
 public class GlobeCollider : Collidable
 {
-    public static event Action<Vector2> OnYarnExitGlobe;
+    public static event Action<Vector3> OnYarnExitGlobe;
     
-    public void CollisionExit(Vector2 exitPoint)
+    public void CollisionExit(Vector3 exitPoint)
     {
         base.Collision();
         OnYarnExitGlobe?.Invoke(exitPoint);

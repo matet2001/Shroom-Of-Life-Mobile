@@ -13,15 +13,15 @@ public class ConnectionManager : MonoBehaviour
 
     public static event Action<List<TreeController>, List<MushroomController>> OnConnectionListInit;
 
-    public List<TreeController> treeControllerList;
-    public List<MushroomController> mushroomControllerList;
+    public List<TreeController> treeControllerList = new List<TreeController>();
+    public List<MushroomController> mushroomControllerList = new List<MushroomController>();
     
     private void Start()
     {
         OnConnectionListInit?.Invoke(treeControllerList, mushroomControllerList);
 
         TreeController.OnTreeCollision += (treeController) => AddTreeToList(treeController);
-        GlobeCollider.OnYarnExitGlobe += GlobeCollider_OnYarnExitGlobe;
+        ManagerCameraDistanceChecker.OnCanCreateMushroom += CreateNewMushroom;
     }
     private void Update()
     {
@@ -30,7 +30,7 @@ public class ConnectionManager : MonoBehaviour
             OnWinGame?.Invoke();
         }
     }
-    private void GlobeCollider_OnYarnExitGlobe(Vector2 exitPosition)
+    private void CreateNewMushroom(Vector3 exitPosition)
     {
         MushroomController mushroomController = MushroomController.CreateMushroom(exitPosition);
         AddMushroomToList(mushroomController);

@@ -78,8 +78,8 @@ public class ResourceManager : MonoBehaviour
     }
     private void ConnectionInit(List<TreeController> treeList, List<MushroomController> mushroomList)
     {
-        treeList.ForEach(tree => AddTreeToList(tree));
-        mushroomList.ForEach(mushroom => AddMushroomToList(mushroom));
+        if (treeList.Count != 0) treeList.ForEach(tree => AddTreeToList(tree));
+        if (mushroomList.Count != 0) mushroomList.ForEach(mushroom => AddMushroomToList(mushroom));
     }
     private void AddTreeToList(TreeController treeController)
     {

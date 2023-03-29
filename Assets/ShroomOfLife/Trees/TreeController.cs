@@ -1,3 +1,4 @@
+using ImmersiveVRTools.Runtime.Common.PropertyDrawer;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -5,8 +6,12 @@ using UnityEngine;
 
 public class TreeController : MonoBehaviour
 {
-    public TreeType treeType;
+    [field: SerializeField]
+    public TreeType treeType { get; private set; }
     public TreeResourceData resourceData { get; private set; }
+
+    [SerializeField] TreeResourcePaneUI panelUI;
+    [SerializeField] TreeUIManager treeUIManager;
 
     private void Awake()
     {
@@ -16,13 +21,25 @@ public class TreeController : MonoBehaviour
     {
         SetUpSprite();
         SubscriptToEvents();
+        treeUIManager.SetGrowCostText(treeType.upgradeResourceCost[growLevel].amount);    
 
-        treeUIManager.SetGrowCostText(treeType.upgradeResourceCost[growLevel].amount);
-    }
+        panelUI.RefreshSliderValues(resourceData);
+    } 
     private void SubscriptToEvents()
     {
-        treeUIManager.OnGrowButtonPressed += TryToGrow;
+        treeUIManager.growButtonController.OnGrowButtonPressed += TryToGrow;
+        treeUIManager.growButtonController.OnPointerEnterButton += TreeUIManager_OnPointerEnterButton;
+        treeUIManager.growButtonController.OnPointerExitButton += TreeUIManager_OnPointerExitButton;
+
         treeCollisionManager.OnYarnCollided += delegate () { OnTreeCollision?.Invoke(this); };
+    }
+    private void TreeUIManager_OnPointerEnterButton()
+    {
+        panelUI.RefreshSliderValues(treeType, growLevel);
+    }
+    private void TreeUIManager_OnPointerExitButton()
+    {
+        panelUI.RefreshSliderValues(resourceData);
     }
     #region Manage Collider and Visual
     public static event Action<TreeController> OnTreeCollision;
@@ -63,6 +80,7 @@ public class TreeController : MonoBehaviour
 
         if(!shouldShowUI) return;
         treeUIManager.SetGrowCostText(treeType.upgradeResourceCost[growLevel].amount);
+        panelUI.RefreshSliderValues(resourceData);
     }
     private bool TryToSpendUgradeCost()
     {
@@ -81,7 +99,7 @@ public class TreeController : MonoBehaviour
     }
     #endregion
     #region Manage UI
-    [SerializeField] TreeUIManager treeUIManager;
+    
 
     public TreeUIManager GetTreeUIManager() => treeUIManager;
     #endregion

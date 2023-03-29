@@ -21,9 +21,10 @@ public class InputManager : MonoBehaviour
     {
         return Input.mousePosition;
     }
-    public static bool IsMouseRightClick() => Input.GetMouseButton(1);
-    public static bool IsMouseRightClickPressed() => Input.GetMouseButtonDown(1);
     public static bool IsMouseLeftClick() => Input.GetMouseButton(0);
+    public static bool IsMouseLeftClickPressed() => Input.GetMouseButtonDown(0);
+    public static bool IsMouseRightClick() => Input.GetMouseButton(1);
+    public static bool IsMouseRightClickPressed() => Input.GetMouseButtonDown(1);   
     #endregion
     #region Keyboard Input
     public static float GetHorizontalAxis() => Input.GetAxis("Horizontal");

@@ -101,15 +101,18 @@ namespace StateManagment
     public abstract class GameState : State
     {
         public GameObject stateVirtualCamera;
-        
+        protected bool isTransitioning;
+        protected float transitionTime = 2f;
+
         public override void OnEnter()
         {
             stateVirtualCamera.SetActive(true);
+            isTransitioning = true;
         }
         public override void OnExit()
         {
             stateVirtualCamera.SetActive(false);
-        }  
+        }    
     }
     public interface IEventTransition
     {

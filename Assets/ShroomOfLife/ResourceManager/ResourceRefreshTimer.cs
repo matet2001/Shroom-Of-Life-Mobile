@@ -19,6 +19,9 @@ public class ResourceRefreshTimer : MonoBehaviour
     {
         WinState.OnWinGame += ManageGameEnd;
         LoseState.OnLoseGame += ManageGameEnd;
+        
+        TutorialManager.OnStageReveale += Pause;
+        TutorialManager.OnStageHide += delegate (GameObject gm) { Continue(); };
 
         refreshTimeMax = refreshTimer;
 
@@ -51,7 +54,10 @@ public class ResourceRefreshTimer : MonoBehaviour
     private void SetUI() => resourceTimerUIController.SetTimerText(refreshTimer);
     private void ManageGameEnd()
     {
-        shouldCountDown = false;
+        Pause();
         resourceTimerUIController.HideUI();
-    } 
+    }
+    private void Pause() => shouldCountDown = false;
+    private void Continue() => shouldCountDown = true;
+
 }

@@ -23,8 +23,9 @@ namespace StateManagment
         public override void OnEnter()
         {
             base.OnEnter();
-            OnManagerStateEnter?.Invoke();
+            StartCoroutine(TransitionCountDown());
         }
+
         public override void OnUpdate()
         {
            
@@ -34,13 +35,10 @@ namespace StateManagment
             base.OnExit();
             OnManagerStateExit?.Invoke(cameraContainerTransform);
         }      
-        public override bool TransitionToThisState()
+        public IEnumerator TransitionCountDown()
         {
-            if (Input.GetKeyDown(KeyCode.Q))
-            {
-                return true;
-            }
-            return false;
+            yield return new WaitForSeconds(transitionTime);
+            OnManagerStateEnter?.Invoke();
         }
     }
 }

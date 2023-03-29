@@ -12,6 +12,11 @@ public class TreeVisualController : MonoBehaviour
     {
         treeSprites = treeType.treeSprites;
     }
+    public void SetTreeSprites(TreeType treeType, int spriteIndex)
+    {
+        treeSprites = treeType.treeSprites;
+        SetSpriteIndex(spriteIndex);
+    }
     public void SetSpriteIndex(int spriteIndex)
     {
         treeSpriteRenderer.sprite = treeSprites[spriteIndex].treeSprite;

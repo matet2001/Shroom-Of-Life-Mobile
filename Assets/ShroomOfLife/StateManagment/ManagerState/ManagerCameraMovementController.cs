@@ -8,21 +8,33 @@ public class ManagerCameraMovementController : MonoBehaviour
 {
     private Transform cameraContainerTransform;
     private bool isManagerStateActive;
+
+    [SerializeField] float doubleClickdelayTime;
+    private bool isDoubleClick;
+    private Coroutine DoubleClickCoroutine;
+
+    private bool isPause;
     
     private void Awake()
     {
         treePositionList = new List<Vector2>();
-        
-        ConnectionManager.OnTreeListChange += ResetTreeData;
+
+        ConnectionManager.OnConnectionListInit += ConnectionInit;
+        ConnectionManager.OnTreeListChange += AddTreeToList;
 
         ManagerState.OnManagerStateInit += ManagerState_OnManagerStateInit;
         ManagerState.OnManagerStateEnter += ManagerStateEnter;
         ManagerState.OnManagerStateExit += ManagerStateExit;
+
+        TutorialManager.OnStageReveale += Pause;
+        TutorialManager.OnStageHide += delegate (GameObject gm) { Continue(); };
     }
     private void ManagerState_OnManagerStateInit(Transform containerTransform)
     {
         cameraContainerTransform = containerTransform;
     }
+    private void Pause() => isPause = true;
+    private void Continue() => isPause = false;
     private void Update()
     {
         MoveCamera();
@@ -30,9 +42,33 @@ public class ManagerCameraMovementController : MonoBehaviour
     private void MoveCamera()
     {
         if (!isManagerStateActive) return;
-        
-        if (InputManager.IsShiftHold()) JumpHorizontalMovement();
+        if (isPause) return;
+
+        if (ShouldUseJumpMovement()) JumpHorizontalMovement();
         else SimpleHorizontalMovement();
+    }
+    private bool ShouldUseJumpMovement()
+    {
+        bool isClick = InputManager.IsMouseLeftClickPressed();
+
+        if (isDoubleClick && isClick)
+        {
+            isDoubleClick = false;
+            StopCoroutine(DoubleClickCoroutine);
+            return true;
+        } 
+        if(!isDoubleClick && isClick)
+        {
+            isDoubleClick = true;
+            DoubleClickCoroutine = StartCoroutine(DoubleClickDelay());
+        }
+
+        return InputManager.IsShiftHold();
+    }
+    private IEnumerator DoubleClickDelay()
+    {
+        yield return new WaitForSeconds(doubleClickdelayTime);
+        isDoubleClick = false;
     }
     private void ManagerStateEnter()
     {
@@ -58,7 +94,8 @@ public class ManagerCameraMovementController : MonoBehaviour
    
     private void SimpleHorizontalMovement()
     {
-        float horizontalInput = InputManager.GetHorizontalAxis();
+        float horizontalInput = GetHorizontalInput();
+
         float containerCurrentZRotation = cameraContainerTransform.localEulerAngles.z;
         containerCurrentZRotation += horizontalInput * Time.deltaTime * cameraRotationSpeed * -1f;
 
@@ -66,6 +103,20 @@ public class ManagerCameraMovementController : MonoBehaviour
 
         if (horizontalInput != 0) IncreaseSpeedOverTime();
         else ResetCameraSpeed();
+    }
+    private static float GetHorizontalInput()
+    {
+        bool isClick = InputManager.IsMouseLeftClick();
+        if (isClick)
+        {
+            Vector2 mousePos = InputManager.GetMouseScreenPosition();
+            float halfWidth = Screen.width / 2f;
+
+            if (mousePos.x < halfWidth - halfWidth / 3 * 1) return -1f;
+            if (mousePos.x > halfWidth + halfWidth / 3 * 1) return 1f;
+        }
+
+        return InputManager.GetHorizontalAxis();
     }
     private void IncreaseSpeedOverTime()
     {
@@ -102,10 +153,7 @@ public class ManagerCameraMovementController : MonoBehaviour
     {
         if (treePositionList.Count == 0) return;
 
-        float inputDirection = 0;
-
-        if (InputManager.IsLeftMovementKeyPressed()) inputDirection = 1;
-        if (InputManager.IsRightMovementKeyPressed()) inputDirection = -1;
+        float inputDirection = GetHorizontalPressInput();
 
         if (inputDirection == 0) return;
       
@@ -127,9 +175,34 @@ public class ManagerCameraMovementController : MonoBehaviour
 
         cameraContainerTransform.transform.localEulerAngles += new Vector3(0f, 0f, closestAngle);
     }
-    private void ResetTreeData(TreeController treeController)
+    private static float GetHorizontalPressInput()
+    {
+        bool isClick = InputManager.IsMouseLeftClickPressed();
+
+        if (isClick)
+        {
+            Vector2 mousePos = InputManager.GetMouseScreenPosition();
+            float halfWidth = Screen.width / 2f;
+
+            if (mousePos.x < halfWidth - halfWidth / 3 * 1) return 1f;
+            if (mousePos.x > halfWidth + halfWidth / 3 * 1) return -1f;
+        }
+
+        float horizontalInput = 0f;
+
+        if (InputManager.IsRightMovementKeyPressed()) horizontalInput = -1f;
+        if (InputManager.IsLeftMovementKeyPressed()) horizontalInput = 1f;
+
+        return horizontalInput;
+    }
+    private void ConnectionInit(List<TreeController> treeList, List<MushroomController> mushroomList)
+    {
+        if (treeList.Count != 0) treeList.ForEach(tree => AddTreeToList(tree));
+    }
+    private void AddTreeToList(TreeController treeController)
     {
         treePositionList.Add(treeController.transform.position);
     }
+
     #endregion
 }

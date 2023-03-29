@@ -3,43 +3,46 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class TreeUIManager : MonoBehaviour
 {
+    public static event Action OnFirstUIShow;
+    private bool isUIShowned;
+    
     public bool isUIVisible { private set; get; }
     [SerializeField] GameObject Canvas;
 
-    public event Action OnGrowButtonPressed;
-
-    [SerializeField] Button growButton;
+    public TreeGrowButtonController growButtonController;
     [SerializeField] TextMeshProUGUI growCostText;
     private bool shouldButtonBeVisible = true;
-
     [SerializeField] Transform selectedCircleTransform;
 
     private void Start()
     {
         RefreshUIActivity();
-
-        growButton.onClick.AddListener(() => OnGrowButtonPressed?.Invoke());
+        OnFirstUIShow += delegate () { isUIShowned = true; };
     }
     private void Update()
     {
         RotateSelectedUI();
-    } 
+    }
     public void SetUIActive(bool active)
     {
         isUIVisible = active;
+        if (active && !isUIShowned) OnFirstUIShow?.Invoke();
         RefreshUIActivity();
     }
     private void RefreshUIActivity()
     {
         SetTargetCircleActive(isUIVisible);
 
-        if (shouldButtonBeVisible) SetUIACtive(isUIVisible);
-        else SetUIACtive(false);
+        if (shouldButtonBeVisible) SetCanvasActive(isUIVisible);
+        else SetCanvasActive(false);
     }
+    private void SetCanvasActive(bool active) => Canvas.gameObject.SetActive(active);
+    
     #region Manage Target Circle
     private void RotateSelectedUI()
     {
@@ -48,8 +51,7 @@ public class TreeUIManager : MonoBehaviour
     }
     private void SetTargetCircleActive(bool active) => selectedCircleTransform.gameObject.SetActive(active);
     #endregion
-    #region Manage Grow 
-    private void SetUIACtive(bool active) => Canvas.gameObject.SetActive(active);
+    #region Manage Grow   
     public void SetGrowButtonShouldVisible(bool active)
     {
         shouldButtonBeVisible = active;
