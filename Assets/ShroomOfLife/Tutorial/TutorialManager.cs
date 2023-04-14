@@ -7,98 +7,117 @@ using UnityEngine.UI;
 public class TutorialManager : MonoBehaviour
 {
     public static event Action OnStageReveale;
-    public static event Action<GameObject> OnStageHide; 
+    public static event Action<GameObject> OnStageHide;
 
     [SerializeField] bool hasSeenTutorial = false;
     private bool isStageActive;
-
-    [SerializeField] GameObject background, stageContainer;
-    [SerializeField] Button skipButton;
     
+    [SerializeField] Transform stageContainerTransform;
     [SerializeField] GameObject[] stages;
-    private int stageIndex = -1;
-    [SerializeField] List<GameObject> partList;
-    private int partIndex = 0;
+    private GameObject currentStage;
+    private TutorialStageController currentStageController;
 
+    private void OnValidate()
+    {
+        GetStages();
+    }
     private void Awake()
     {
-        background.SetActive(false);
-        skipButton.onClick.AddListener(SkipTutorial);
-        skipButton.gameObject.SetActive(false);
-        Array.ForEach(stages, stage => { stage.SetActive(false); });
-        stageContainer.SetActive(true);
+        HideAllChild();
+        Debug();
+    }
+    private void Start()
+    {
+        StageTriggerer.OnTrigger += TryToShowStage;
     }
     private void Update()
     {
         HandleMousePress();
     }
-    public void NextStage()
+    private void HideAllChild()
     {
-        if (hasSeenTutorial) return;
-        //if (IsReachedLastStage())
-        //{
-        //    hasSeenTutorial = true;
-        //    return;
-        //}
-
-        stageIndex++;
-        RevealCurrentStage();
-    }
-    private void RevealCurrentStage()
-    {
-        background.SetActive(true);
-        skipButton.gameObject.SetActive(true);
-        stages[stageIndex].SetActive(true);
-        isStageActive = true;
-
-        SetCurrentStageList();
-        
-        partIndex = 0;
-        partList[partIndex].SetActive(true);
-        OnStageReveale?.Invoke();
-    }
-    private void SetCurrentStageList()
-    {
-        partList = new List<GameObject>();
-        foreach (Transform child in stages[stageIndex].transform)
+        foreach (Transform child in transform)
         {
-            partList.Add(child.gameObject);
             child.gameObject.SetActive(false);
         }
     }
-    public void HideCurrentStage()
+    private void ShowChilds()
     {
-        stages[stageIndex].SetActive(false);
-        background.SetActive(false);
-        skipButton.gameObject.SetActive(false);
-        isStageActive = false;
-
-        OnStageHide?.Invoke(stages[stageIndex]);
-    }
-    private bool TryToRevealNextPart()
-    {
-        if (partIndex < partList.Count - 1)
+        foreach (Transform child in transform)
         {
-            partList[partIndex].SetActive(false);
-            partIndex++;
-            partList[partIndex].SetActive(true);
-            return true;
+            child.gameObject.SetActive(true);
         }
-
-        return false;
     }
-    private void SkipTutorial()
+    #region StageControll
+    private void GetStages()
     {
-        hasSeenTutorial = true;
-        HideCurrentStage();
+        if (!stageContainerTransform) return;
+
+        stages = new GameObject[stageContainerTransform.childCount];
+
+        for (int i = 0; i < stageContainerTransform.childCount; i++)
+        {
+            stages[i] = stageContainerTransform.GetChild(i).gameObject;
+        }
     }
+    private void TryToShowStage(GameObject stageGameObject)
+    {
+        if (hasSeenTutorial) return;
+        if (isStageActive) return;
+
+        currentStage = stageGameObject;
+        ShowStage();
+        
+        currentStageController = currentStage.GetComponent<TutorialStageController>();
+        currentStageController.FirstPart();
+    }
+    private void ShowStage() => SetStageActive(currentStage, true);
+    private void HideStage() => SetStageActive(currentStage, false);
+    private void SetStageActive(GameObject stageGameObject, bool active)
+    {
+        stageGameObject.SetActive(active);
+
+        if (active) ShowChilds();
+        else HideAllChild();
+
+        isStageActive = active;
+    }
+    #endregion
+    #region PartControll
     private void HandleMousePress()
     {
         if (!isStageActive) return;
+        if (RaycastUtilities.PointerIsOverUI("Skip")) return;
         if (!InputManager.IsMouseLeftClickPressed()) return;
-
-        if (!TryToRevealNextPart()) HideCurrentStage();
+        
+        NextPart();
     }
-    private bool IsReachedLastStage() { return stageIndex < stages.Length; }
-    public GameObject GetNextStage() => stages[stageIndex + 1];
+    private void NextPart()
+    {
+        if (!currentStageController) return;
+        if (currentStageController.IsReachedLastPart())
+        {
+            HideStage();
+            return;
+        }
+
+        currentStageController.NextPart();
+    }
+    #endregion
+    public void SkipTutorial()
+    {
+        hasSeenTutorial = true;
+        HideStage();
+    }
+    private void Debug()
+    {
+#if UNITY_ANDROID || UNITY_WEBGL || UNITY_IOS
+        hasSeenTutorial = false;
+        UnityEngine.Debug.Log("WEBGL/MOBILE");
+#endif
+#if UNITY_EDITOR
+        //hasSeenTutorial = true;
+        //UnityEngine.Debug.Log("EDITOR");
+#endif
+    }
 }

@@ -23,6 +23,8 @@ public class ResourceRefreshTimer : MonoBehaviour
         TutorialManager.OnStageReveale += Pause;
         TutorialManager.OnStageHide += delegate (GameObject gm) { Continue(); };
 
+        LevelSceneManager.OnRestart += RestartTimer;
+
         refreshTimeMax = refreshTimer;
 
         resourceTimerUIController.GetButton().onClick.AddListener(SkipCountdown);
@@ -43,6 +45,7 @@ public class ResourceRefreshTimer : MonoBehaviour
         if (refreshTimer <= 0)
         {
             refreshTimer = refreshTimeMax;
+            SoundManager.Instance.PlaySound("Game/TurnHappen", transform.position);
             OnResourceRefresh?.Invoke();
         }
         else refreshTimer -= Time.deltaTime;
@@ -59,5 +62,11 @@ public class ResourceRefreshTimer : MonoBehaviour
     }
     private void Pause() => shouldCountDown = false;
     private void Continue() => shouldCountDown = true;
-
+    private void RestartTimer()
+    {
+        refreshTimer = refreshTimeMax;
+        resourceTimerUIController.ShowUI();
+        Continue();
+        SetUI();
+    }
 }

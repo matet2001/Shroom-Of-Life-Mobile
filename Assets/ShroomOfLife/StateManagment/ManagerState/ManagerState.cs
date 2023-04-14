@@ -12,18 +12,22 @@ namespace StateManagment
         public static event Action<Transform> OnManagerStateExit;      
 
         [SerializeField] Transform cameraContainerTransform;
-       
+
+        private Coroutine transitionCountDownCoroutine;
+
         private void Start()
         {
             Collidable.OnCollidableCollision += TriggerTransitionEvent;
             YarnMovementController.OnRunOutOfYarnResource += TriggerTransitionEvent;
+
+            LevelSceneManager.OnRestart += TriggerTransitionEvent;
 
             OnManagerStateInit?.Invoke(cameraContainerTransform);
         }
         public override void OnEnter()
         {
             base.OnEnter();
-            StartCoroutine(TransitionCountDown());
+            transitionCountDownCoroutine = StartCoroutine(TransitionCountDown());
         }
 
         public override void OnUpdate()
@@ -33,6 +37,7 @@ namespace StateManagment
         public override void OnExit()
         {
             base.OnExit();
+            if(transitionCountDownCoroutine != null) StopCoroutine(transitionCountDownCoroutine);
             OnManagerStateExit?.Invoke(cameraContainerTransform);
         }      
         public IEnumerator TransitionCountDown()

@@ -18,14 +18,16 @@ namespace StateManagment
         {
             base.OnEnter();
             OnLoseGame?.Invoke();
-            Debug.Log("Game lost!");
+            SoundManager.Instance.PlaySound("Game/Lose", transform.position);
         }
         public override void OnUpdate()
         {
+#if UNITY_EDITOR
             if (Input.GetKeyDown(KeyCode.R))
             {
                 LevelSceneManager.RestartScene();
             }
+#endif
         }
     }
 }

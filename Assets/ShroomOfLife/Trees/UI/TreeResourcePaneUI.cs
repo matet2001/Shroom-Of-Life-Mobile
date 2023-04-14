@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
-using UnityEditor.U2D.Path.GUIFramework;
 using UnityEngine;
 
 public class TreeResourcePaneUI : MonoBehaviour
@@ -14,15 +13,16 @@ public class TreeResourcePaneUI : MonoBehaviour
     private static string normalPanelText = "Current Resource Data";
     private static string nextLevelPanelText = "Next Level Resource Data";
 
-    public void RefreshSliderValues(TreeResourceData resourceData)
+    //Show current level values
+    public void RefreshSliderValues(TreeController tree)
     {
         panelText.text = normalPanelText;
 
         Dictionary<ResourceType, float> resourceAmount = new Dictionary<ResourceType, float>
         {
-            { resourceSliders[0].resourceType, resourceData.resourceUse[resourceSliders[0].resourceType] },
-            { resourceSliders[1].resourceType, resourceData.resourceProduce[resourceSliders[1].resourceType] },
-            { resourceSliders[2].resourceType, resourceData.resourceProduce[resourceSliders[2].resourceType] }
+            { resourceSliders[0].resourceType, tree.GetCurrentResourceUse(resourceSliders[0].resourceType).amount },
+            { resourceSliders[1].resourceType, tree.GetCurrentResourceProduce(resourceSliders[1].resourceType).amount },
+            { resourceSliders[2].resourceType, tree.GetCurrentResourceProduce(resourceSliders[2].resourceType).amount }
         };
 
         foreach (SliderData sliderData in resourceSliders)
@@ -33,21 +33,21 @@ public class TreeResourcePaneUI : MonoBehaviour
             sliderController.SetIconImage(sliderResourceType.iconImage);
             //sliderController.SetSliderColor(sliderResourceType.sliderColor);
 
-            
-            sliderController.SetUpSlider(resourceAmount[sliderResourceType], resourceData.resourceMax[sliderResourceType]);
+            sliderController.SetUpSlider(resourceAmount[sliderResourceType], tree.GetCurrentResourceMax(sliderResourceType).amount);
         }
     }
-    public void RefreshSliderValues(TreeType treeType, int growLevel)
+    //Show next level values
+    public void RefreshSliderValues(TreeController tree, int growLevel)
     {
         panelText.text = nextLevelPanelText;
 
-        int nextGrowLevel = (growLevel + 1) * 2;
+        int nextGrowLevel = growLevel + 1;
 
         Dictionary<ResourceType, float> resourceAmount = new Dictionary<ResourceType, float>
         {
-            { resourceSliders[0].resourceType, treeType.resourceUse.Find(x => x.type == resourceSliders[0].resourceType).amount * nextGrowLevel},
-            { resourceSliders[1].resourceType, treeType.resourceProduce.Find(x => x.type == resourceSliders[1].resourceType).amount * nextGrowLevel},
-            { resourceSliders[2].resourceType, treeType.resourceProduce.Find(x => x.type == resourceSliders[2].resourceType).amount * nextGrowLevel}
+            { resourceSliders[0].resourceType, tree.GetResourceUseAtLevel(resourceSliders[0].resourceType, nextGrowLevel)},
+            { resourceSliders[1].resourceType, tree.GetResourceProduceAtLevel(resourceSliders[1].resourceType, nextGrowLevel)},
+            { resourceSliders[2].resourceType, tree.GetResourceProduceAtLevel(resourceSliders[2].resourceType, nextGrowLevel)}
         };
 
         foreach (SliderData sliderData in resourceSliders)
@@ -59,7 +59,7 @@ public class TreeResourcePaneUI : MonoBehaviour
             //sliderController.SetSliderColor(sliderResourceType.sliderColor);
 
             float sliderValue = resourceAmount[sliderResourceType];
-            float sliderMaxValue = treeType.resourceMax.Find(x => x.type == sliderData.resourceType).amount;
+            float sliderMaxValue = tree.GetResourceMaxAtLevel(sliderResourceType, nextGrowLevel);
             sliderController.SetUpSlider(sliderValue, sliderMaxValue * nextGrowLevel);
         }
     }

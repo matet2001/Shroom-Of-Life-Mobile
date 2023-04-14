@@ -15,11 +15,12 @@ public class GameEndTextUIManager : MonoBehaviour
         WinState.OnWinGame += RevealWinText;
         LoseState.OnLoseGame += RevealLoseText;
 
+        LevelSceneManager.OnRestart += HideEverything;
+
         otherUI.SetActive(false);
         winText.gameObject.SetActive(false);
         loseText.gameObject.SetActive(false);
     }
-
     private void RevealWinText()
     {
         otherUI.SetActive(true);
@@ -29,5 +30,12 @@ public class GameEndTextUIManager : MonoBehaviour
     {
         otherUI.SetActive(true);
         loseText.gameObject.SetActive(true);
+    }
+    private void HideEverything()
+    {
+        otherUI.SetActive(false);
+        winText.gameObject.SetActive(false);
+        loseText.gameObject.SetActive(false);
+
     }
 }

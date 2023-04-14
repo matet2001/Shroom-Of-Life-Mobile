@@ -7,6 +7,8 @@ public class ResourceManagerData : ResourceData
     #region Resource Data Store
     public Dictionary<ResourceType, float> resourceAmount;
     public Dictionary<ResourceType, float> resourceProduce;
+    public Dictionary<ResourceType, float> resourceUse;
+    public Dictionary<ResourceType, float> resourceMax;
 
     public ResourceManagerData(StarterResourceDataType resourceDataType)
     {
@@ -30,6 +32,8 @@ public class ResourceManagerData : ResourceData
 
         resourceAmount = new Dictionary<ResourceType, float>();
         resourceProduce = new Dictionary<ResourceType, float>();
+        resourceUse = new Dictionary<ResourceType, float>();
+        resourceMax = new Dictionary<ResourceType, float>();
     }
     #endregion
     #region Spend Resource
@@ -63,8 +67,8 @@ public class ResourceManagerData : ResourceData
 
         resourceAmount[resourceUnit.type] += unitAmount;
         resourceAmount[resourceUnit.type] = Mathf.Min(resourceAmount[resourceUnit.type], maxAmount);
-        
-        if (currentAmount + unitAmount >= maxAmount) return false;  
+
+        if (currentAmount + unitAmount >= maxAmount) return false;
         return true;
     }
     #endregion

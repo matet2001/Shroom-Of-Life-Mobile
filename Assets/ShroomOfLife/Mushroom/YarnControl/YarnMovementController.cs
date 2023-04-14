@@ -10,10 +10,14 @@ public class YarnMovementController : MonoBehaviour
     private void Awake()
     {
         yarnTrailPrefab = Resources.Load<Transform>("pfYarnTrail");
+
+        startPosition = transform.position;
     }
     private void Start()
     {
         SubscribeToEvents();
+
+        darkerYarnMaterial = Resources.Load<Material>("DarkerYarn");
     }
     private void Update()
     {
@@ -28,11 +32,13 @@ public class YarnMovementController : MonoBehaviour
 
         MushroomController.OnTryToStartYarn += TryToStartYarn;
 
-        YarnCrosshairController.OnYarnCrosshairEnter += StartArcMovement;
-        YarnCrosshairController.OnYarnCrosshairExit += delegate (Vector2 position) { shouldMoveOnArc = false; };
+        //YarnCrosshairController.OnYarnCrosshairEnter += StartArcMovement;
+        //YarnCrosshairController.OnYarnCrosshairExit += delegate (Vector2 position) { shouldMoveOnArc = false; };
 
         TutorialManager.OnStageReveale += PauseYarn;
         TutorialManager.OnStageHide += TutorialManager_OnStageHide;
+
+        LevelSceneManager.OnRestart += Restart;
     }
 
     private void TutorialManager_OnStageHide(GameObject obj)
@@ -51,12 +57,22 @@ public class YarnMovementController : MonoBehaviour
     private Transform yarnTrailPrefab;
     private TrailRenderer currentYarnTrail;
     private bool shouldMoveYarn;
-    private bool isPaused = true;
+    private bool isPaused = false;
     private bool isGameEnded = false;
     [SerializeField] Transform yarnTrailContainer;
 
-    public static event Action OnYarnStart;
-    
+    [SerializeField] Transform cameraContainerTransform;
+    [SerializeField] Transform followCameraTransform;
+
+    private Vector3 startPosition;
+
+    public static event Action<Vector2> OnYarnStart;
+    private GameObject moveSound;
+
+    private Material darkerYarnMaterial;
+    public Biome startBiome { get; private set; }
+
+
     public void TryToStartYarn(Vector3 startPosition)
     {
         if (isGameEnded) return;
@@ -64,7 +80,7 @@ public class YarnMovementController : MonoBehaviour
         
         if (!ResourceManager.resourceData.CanSpendResource(idleMovementCost))
         {
-            JuiceTextCreator.CreateJuiceText(transform.position, "You don't have enough \n energy to start yarn", "BasicTextSO");
+            JuiceTextCreator.CreateJuiceText("You don't have enough energy to start yarn", Color.red);
             return;
         } 
 
@@ -74,13 +90,18 @@ public class YarnMovementController : MonoBehaviour
     {
         shouldMoveYarn = true;
         transform.position = startPosition;
+        startBiome = BiomeManager.Instance.GetBiomOnPosition(startPosition);
         currentYarnTrail = Instantiate(yarnTrailPrefab, startPosition, Quaternion.identity, transform).GetComponent<TrailRenderer>();
-        OnYarnStart?.Invoke();
+        OnYarnStart?.Invoke(startPosition);
+
+        moveSound = SoundManager.Instance.PlaySoundLooped("Yarn/Movement", transform.position, transform);
     }
     private void StopMoving()
     {
         shouldMoveYarn = false;
         DetacheYarn();
+
+        if(moveSound) SoundManager.Instance.StopSound(moveSound);
     }
     private void DetacheYarn()
     {
@@ -88,6 +109,9 @@ public class YarnMovementController : MonoBehaviour
 
         currentYarnTrail.emitting = false;
         currentYarnTrail.transform.parent = yarnTrailContainer;
+        currentYarnTrail.sortingOrder = -3;
+        currentYarnTrail.material = darkerYarnMaterial;
+        oldVector = Vector2.zero;
     }
     private void ContinueYarn()
     {
@@ -108,115 +132,92 @@ public class YarnMovementController : MonoBehaviour
         if (!shouldMoveYarn) return;
         if (isPaused) return;
 
-        if (!shouldMoveOnArc) SimpleMovement();
-        else MoveYarnAtArc();
-
-        bool isResourceSpent = SpendMovementCost();
-        RunOutResource(isResourceSpent);
+        SimpleMovement();  
     }
     private void ManageGameEnd()
     {
         StopMoving();
         isGameEnded = true;
+        transform.position = startPosition;
     }
     #endregion
-    #region Movement Types
-    [SerializeField] YarnCrosshairController yarnCrosshairController;
-    
     #region Simple Movement
+    [SerializeField] YarnCrosshairController yarnCrosshairController;
     [SerializeField] float idleSpeed, sprintMultiplier;
-    [SerializeField] float doubleClickdelayTime;
-
-    private bool isSprint, isSimpleClick;
-    private Coroutine DoubleClickCoroutine;
+    private Vector2 oldVector = Vector2.zero;
 
     private void SimpleMovement()
     {
-        SetIsSprint();
-        
-        Vector2 mousePosition = yarnCrosshairController.transform.position;
-        Debug.DrawLine(transform.position, mousePosition, Color.red);
-        Vector3 direction = (mousePosition - (Vector2)transform.position).normalized;
+        Vector2 inputVector = GetInputVector();
+        bool isSprint = GetIsSprint(inputVector);
+        Vector2 moveVector = GetMoveVector(inputVector, isSprint);
+        MoveTransformToDirection(moveVector);
 
-        MoveTransformToDirection(direction, DecideSpeed());
+        bool isResourceSpent = SpendMovementCost(isSprint);
+        RunOutResource(isResourceSpent);
     }
-    private void MoveTransformToDirection(Vector3 direction, float moveSpeed)
+    private Vector2 GetInputVector()
     {
-        transform.position += direction * moveSpeed * Time.deltaTime;
-    }
-    private float DecideSpeed()
-    {
-        float moveSpeed = (!isSprint) ? idleSpeed : idleSpeed * sprintMultiplier;
-        return moveSpeed;
-    }
-    private void SetIsSprint()
-    {
-        bool isClick = InputManager.IsMouseLeftClickPressed();
-        bool isClickHold = InputManager.IsMouseLeftClick();
+        Vector2 inputVector = MoveInputUI.Instance.GetInputVector();
 
-        //Cancel sprint
-        if (!isClickHold) isSprint = false;
+        Vector2 cameraUpVector = followCameraTransform.up;
+        Quaternion fixRotation = Quaternion.FromToRotation(Vector2.up, cameraUpVector);
+        return fixRotation * inputVector;
+    }
+    private static bool GetIsSprint(Vector2 inputVector)
+    {
+        float inputRange = MoveInputUI.Instance.GetRange();
+        return (inputVector.magnitude > inputRange / 2f);
+    }
+    private Vector2 GetMoveVector(Vector2 inputVector, bool isSprint)
+    {
+        Vector2 moveVector = GetIdleMoveVector();
 
-        //Start double click
-        if (!isSimpleClick && isClick)
+        if (inputVector != Vector2.zero)
         {
-            isSimpleClick = true;
-            DoubleClickCoroutine = StartCoroutine(DoubleClickDelay());
-            return;
+            moveVector = GetControlledMoveVector(inputVector, isSprint);
+        }
+        else if (oldVector != Vector2.zero)
+        {
+            moveVector = GetPreviousMoveVector();
         }
 
-        //Succesfull double click
-        if (isSimpleClick && isClick)
-        {
-            isSimpleClick = false;
-            isSprint = true;
-            StopCoroutine(DoubleClickCoroutine);
-        }
+        return moveVector;
     }
-    //Cancel double click with delay
-    private IEnumerator DoubleClickDelay()
+    private Vector2 GetControlledMoveVector(Vector2 inputVector, bool isSprint)
     {
-        yield return new WaitForSeconds(doubleClickdelayTime);
-        isSimpleClick = false;
+        Vector2 moveVector;
+        float speed = (!isSprint) ? idleSpeed : sprintMultiplier;
+        moveVector = inputVector.normalized * (speed);
+        oldVector = inputVector;
+        return moveVector;
     }
-    #endregion
-    #region Arc Movement
-    private bool shouldMoveOnArc;
-    private Vector3 currentArcVector;
-
-    [Tooltip("It will be divided by 10"), SerializeField]
-    private float arcMoveSpeed;
-
-    private void MoveYarnAtArc()
+    private Vector2 GetPreviousMoveVector()
     {
-        currentArcVector = Quaternion.Euler(0f, 0f, arcMoveSpeed / 10f) * currentArcVector;
-
-        Vector3 goalPosition = yarnCrosshairController.transform.position + currentArcVector;
-        Vector3 direction = goalPosition - transform.position;
-
-        MoveTransformToDirection(direction, arcMoveSpeed / 3f);
+        return oldVector.normalized * (idleSpeed / 2f);
     }
-    private void StartArcMovement(Vector2 position, float arcDistance)
+    private Vector2 GetIdleMoveVector()
     {
-        Vector2 directionVector = (transform.position - yarnCrosshairController.transform.position).normalized;
-        currentArcVector = directionVector * (arcDistance / 3f * 2f);
-        shouldMoveOnArc = true;
+        return (cameraContainerTransform.position - transform.position).normalized * (idleSpeed / 2f);
     }
-    #endregion
+    private void MoveTransformToDirection(Vector3 moveVector)
+    {
+        transform.position += moveVector * Time.deltaTime;
+    }
     #endregion
     #region Resource Management
     public static event Action OnRunOutOfYarnResource;
     
     [SerializeField] ResourceUnit idleMovementCost, sprintMovementCost;
     
-    private bool SpendMovementCost()
+    private bool SpendMovementCost(bool isSprint)
     {
-        float movementCost = DecideMovementCost() * Time.deltaTime;
+        float movementCost = DecideMovementCost(isSprint) * Time.deltaTime;
         ResourceUnit resourceUnit = new ResourceUnit(idleMovementCost.type, movementCost);
         bool isResourceSpent = ResourceManager.Instance.TryToSpendResource(resourceUnit);
         return isResourceSpent;
     }
-    private float DecideMovementCost()
+    private float DecideMovementCost(bool isSprint)
     {
         float movementCost = (!isSprint) ? idleMovementCost.amount : idleMovementCost.amount * sprintMultiplier;
         return movementCost;
@@ -226,8 +227,18 @@ public class YarnMovementController : MonoBehaviour
         if (!isResourceSpent)
         {
             StopMoving();
+            JuiceTextCreator.CreateJuiceText("You ran out of energy", Color.red);
             OnRunOutOfYarnResource?.Invoke();
         }
     }
     #endregion  
+    private void Restart()
+    {
+        isGameEnded = false;
+
+        foreach (Transform child in yarnTrailContainer)
+        {
+            Destroy(child.gameObject);
+        }
+    }
 }

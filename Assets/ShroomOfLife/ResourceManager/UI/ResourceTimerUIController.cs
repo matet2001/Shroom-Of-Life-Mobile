@@ -14,5 +14,6 @@ public class ResourceTimerUIController : MonoBehaviour
         timerText.text = time.ToString("F0");
     }
     public void HideUI() => gameObject.SetActive(false);
+    public void ShowUI() => gameObject.SetActive(true);
     public Button GetButton() => skipButton;
 }

@@ -6,6 +6,7 @@ using UnityEngine;
 public class StarterResourceDataType : ResourceDataType
 {
     public List<ResourceUnit> resourceAmount;
+    public List<ResourceUnit> resourceMax;
 
     [ContextMenu("Rebuild")]
     public void ReBuild()

@@ -1,4 +1,3 @@
-using Mono.Cecil;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -38,118 +37,100 @@ public class ResourceManager : MonoBehaviour
         ConnectionManager.OnMushroomListChange += AddMushroomToList;
 
         ResourceRefreshTimer.OnResourceRefresh += RefreshResourceData;
+
+        LevelSceneManager.OnRestart += ResetResourceManager;
     }
     private void Update()
     {
-
+#if UNITY_EDITOR
         if (Input.GetKeyDown(KeyCode.L))
         {
             OnLoseGame?.Invoke();
         }
+#endif
     }
     #endregion
     #region Set Resource Data
     private List<TreeController> treeList = new List<TreeController>();
     private List<MushroomController> mushroomList = new List<MushroomController>();
-
-   
+  
     private void ManageTreeGrow(TreeController treeController)
     {
         TreeResourceData treeResourceData = treeController.resourceData;
-        
-        foreach (ResourceType resourceType in resourceData.resourceTypes)
-        {
-            int treePreviousLevel = treeController.growLevel - 1;
-            
-            float oldUseAmount = treeController.treeType.resourceUse.Find(x => x.type == resourceType).amount * treePreviousLevel;
-            float useAmount = treeResourceData.resourceUse[resourceType] - oldUseAmount;
-            AddToUseDict(new ResourceUnit(resourceType, useAmount));
-
-            float oldProduceAmount = treeController.treeType.resourceProduce.Find(x => x.type == resourceType).amount * treePreviousLevel;
-            float produceAmount = treeResourceData.resourceProduce[resourceType] - oldProduceAmount;
-            AddToProduceDict(new ResourceUnit(resourceType, produceAmount));
-
-            float oldMaxAmount = treeController.treeType.resourceMax.Find(x => x.type == resourceType).amount * treePreviousLevel;
-            float maxAmount = treeResourceData.resourceMax[resourceType] - oldMaxAmount;
-            AddToMaxDict(new ResourceUnit(resourceType, maxAmount));
-        }
 
         OnResourceAmountMaxChange?.Invoke(resourceData.resourceMax);
     }
-    private void ConnectionInit(List<TreeController> treeList, List<MushroomController> mushroomList)
+    private void ConnectionInit(List<TreeController> _treeList, List<MushroomController> _mushroomList)
     {
-        if (treeList.Count != 0) treeList.ForEach(tree => AddTreeToList(tree));
-        if (mushroomList.Count != 0) mushroomList.ForEach(mushroom => AddMushroomToList(mushroom));
+        treeList = new List<TreeController>();
+        mushroomList = new List<MushroomController>();
+        
+        if (_treeList.Count != 0) _treeList.ForEach(tree => AddTreeToList(tree));
+        if (_mushroomList.Count != 0) _mushroomList.ForEach(mushroom => AddMushroomToList(mushroom));
     }
     private void AddTreeToList(TreeController treeController)
     {
         if (treeList.Contains(treeController)) return;
         treeList.Add(treeController);
-
-        TreeResourceData treeResourceData = treeController.resourceData;
-
-        foreach (ResourceType resourceType in resourceData.resourceTypes)
-        {
-            float useAmount = treeResourceData.resourceUse[resourceType];
-            AddToUseDict(new ResourceUnit(resourceType, useAmount));
-
-            float produceAmount = treeResourceData.resourceProduce[resourceType];
-            AddToProduceDict(new ResourceUnit(resourceType, produceAmount));
-
-            float maxAmount = treeResourceData.resourceMax[resourceType];
-            AddToMaxDict(new ResourceUnit(resourceType, maxAmount));
-        }
-
-        OnResourceAmountMaxChange?.Invoke(resourceData.resourceMax);
+        CalculateResourceMax();
     }
     private void AddMushroomToList(MushroomController mushroomController)
     {
         if (mushroomList.Contains(mushroomController)) return;
         mushroomList.Add(mushroomController);
+        CalculateResourceMax();
+    }
+    private void CalculateResourceMax()
+    {
+        Dictionary<ResourceType, float> resourceMax = new Dictionary<ResourceType, float>();
 
-        MushroomResourceData treeResourceData = mushroomController.resourceData;
-        
         foreach (ResourceType resourceType in resourceData.resourceTypes)
         {
-            float useAmount = treeResourceData.resourceUse[resourceType];
-            AddToUseDict(new ResourceUnit(resourceType, useAmount));
-
-            float maxAmount = treeResourceData.resourceMax[resourceType];
-            AddToMaxDict(new ResourceUnit(resourceType, maxAmount));
+            float max = 0;
+            foreach (TreeController tree in treeList)
+            {
+                max += tree.GetCurrentResourceMax(resourceType).amount;
+            }
+            foreach (MushroomController mushroom in mushroomList)
+            {
+                max += mushroom.resourceData.resourceMax[resourceType];
+            }
+            max += resourceDataType.resourceMax.Find(x => x.type == resourceType).amount;
+            resourceMax.Add(resourceType, max);
+            
         }
+        resourceData.resourceMax = resourceMax;
 
         OnResourceAmountMaxChange?.Invoke(resourceData.resourceMax);
-    }
-    private void AddToMaxDict(ResourceUnit resourceUnit)
-    {
-        resourceData.resourceMax[resourceUnit.type] += resourceUnit.amount;
-    }
-    private void AddToUseDict(ResourceUnit resourceUnit)
-    {
-        resourceData.resourceUse[resourceUnit.type] += resourceUnit.amount;
-    }
-    private void AddToProduceDict(ResourceUnit resourceUnit)
-    {
-        resourceData.resourceProduce[resourceUnit.type] += resourceUnit.amount;
     }
     #endregion
     #region Refresh Resource Data
     private void RefreshResourceData()
-    {
+    {       
         foreach (ResourceType resourceType in resourceData.resourceTypes)
         {
-            TryToUseResource(resourceType);
-            TryToProduceResource(resourceType);
+            foreach (TreeController tree in treeList)
+            {               
+                ResourceUnit currentResourceProduce = tree.GetCurrentResourceProduce(resourceType);
+                TryToProduceResource(currentResourceProduce);
+
+                currentResourceProduce = tree.GetCurrentResourceUse(resourceType);
+                TryToUseResource(currentResourceProduce);
+            }
+            foreach(MushroomController mushroom in mushroomList)
+            {
+                float amount = mushroom.resourceData.resourceUse[resourceType];
+                ResourceUnit currentResourceProduce = new ResourceUnit(resourceType, amount);
+                TryToUseResource(currentResourceProduce);
+            }
         }
 
         OnResourceAmountChange?.Invoke(resourceData.resourceAmount);
     }
     #endregion
     #region Spend Resource
-    private void TryToUseResource(ResourceType resourceType)
+    private void TryToUseResource(ResourceUnit resourceUnit)
     {
-        ResourceUnit resourceUnit = new ResourceUnit(resourceType, resourceData.resourceUse[resourceType]);
-
         if (resourceData.TryToSpendResource(resourceUnit)) return;
 
         OnLoseGame?.Invoke();
@@ -166,13 +147,11 @@ public class ResourceManager : MonoBehaviour
     }
     #endregion
     #region Add Resource
-    private void TryToProduceResource(ResourceType resourceType)
+    private void TryToProduceResource(ResourceUnit resourceUnit)
     {
-        ResourceUnit resourceUnit = new ResourceUnit(resourceType, resourceData.resourceProduce[resourceType]);
-        
         if(resourceData.TryToAddResource(resourceUnit)) return;
 
-        Debug.Log("Max reached for " + resourceType);
+        Debug.Log("Max reached for " + resourceUnit.type);
     }
     public bool TryToAddResource(ResourceUnit resourceUnit)
     {
@@ -185,4 +164,12 @@ public class ResourceManager : MonoBehaviour
         return false;
     }
     #endregion
+    private void ResetResourceManager()
+    {
+        resourceData = new ResourceManagerData(resourceDataType);
+        OnResourceManagerInit?.Invoke(resourceData);
+
+        OnResourceAmountChange?.Invoke(resourceData.resourceAmount);
+        OnResourceAmountMaxChange?.Invoke(resourceData.resourceMax);
+    }
 }

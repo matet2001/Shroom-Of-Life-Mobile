@@ -15,14 +15,16 @@ public class WinState : EventableState
     {
         base.OnEnter();
         OnWinGame?.Invoke();
-        Debug.Log("Game won!");
+        SoundManager.Instance.PlaySound("Game/Win", transform.position);
     }
     public override void OnUpdate()
     {
+#if UNITY_EDITOR
         if (Input.GetKeyDown(KeyCode.R))
         {
             LevelSceneManager.RestartScene();
         }
+#endif
     }
     public override void OnExit()
     {

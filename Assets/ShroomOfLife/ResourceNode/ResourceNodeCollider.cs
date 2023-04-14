@@ -4,7 +4,7 @@ using UnityEngine;
 
 [ExecuteInEditMode]
 [RequireComponent(typeof(Collider2D))]
-public class ResourceNodeCollider : Collidable
+public class ResourceNodeCollider : CollidableObstacle
 {
     [SerializeField] ResourceUnit resourceUnit;
     [SerializeField] float sizeMultiplier = 1f;
@@ -18,6 +18,7 @@ public class ResourceNodeCollider : Collidable
     {
         base.Collision();
         ResourceManager.Instance.TryToAddResource(resourceUnit);
+        SoundManager.Instance.PlaySound("Yarn/Succes", transform.position);
         StartDisappeare();
     }
     private void Update()

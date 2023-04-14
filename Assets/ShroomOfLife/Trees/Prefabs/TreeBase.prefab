@@ -886,7 +886,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   <treeType>k__BackingField: {fileID: 0}
-  panelUI: {fileID: 6256709221704950776}
+  resourcePanelUI: {fileID: 6256709221704950776}
   treeUIManager: {fileID: 7539187129825660513}
   treeSpriteController: {fileID: 7539187129825660514}
   treeCollisionManager: {fileID: 7539187131193200141}
@@ -903,6 +903,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Canvas: {fileID: 1733941940}
+  growPanel: {fileID: 2563739509348932550}
+  resourcePanel: {fileID: 4072466046475348897}
   growButtonController: {fileID: 2863598789138038766}
   growCostText: {fileID: 8415726161307559179}
   selectedCircleTransform: {fileID: 7539187130947218333}

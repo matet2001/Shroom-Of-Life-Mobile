@@ -4,5 +4,5 @@ using UnityEngine;
 
 public abstract class ResourceDataType : ScriptableObject
 {  
-    public List<ResourceUnit> resourceMax;
+    
 }

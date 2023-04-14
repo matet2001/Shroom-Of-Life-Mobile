@@ -12,17 +12,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97b69a3b3e758564b9f1e84ee70dc917, type: 3}
   m_Name: StarterResourceData
   m_EditorClassIdentifier: 
-  resourceMax:
-  - type: {fileID: 11400000, guid: 00b7c9e9ae1a9e746a2588220c6a7a99, type: 2}
-    amount: 5
-  - type: {fileID: 11400000, guid: f2c7e2e086190e949a7f3e085c0b121d, type: 2}
-    amount: 25
-  - type: {fileID: 11400000, guid: 2135960d4f6d7754289627f8bc0baaf0, type: 2}
-    amount: 100
   resourceAmount:
   - type: {fileID: 11400000, guid: 00b7c9e9ae1a9e746a2588220c6a7a99, type: 2}
     amount: 5
   - type: {fileID: 11400000, guid: f2c7e2e086190e949a7f3e085c0b121d, type: 2}
-    amount: 25
+    amount: 10
   - type: {fileID: 11400000, guid: 2135960d4f6d7754289627f8bc0baaf0, type: 2}
-    amount: 50
+    amount: 200
+  resourceMax:
+  - type: {fileID: 11400000, guid: 00b7c9e9ae1a9e746a2588220c6a7a99, type: 2}
+    amount: 5
+  - type: {fileID: 11400000, guid: f2c7e2e086190e949a7f3e085c0b121d, type: 2}
+    amount: 10
+  - type: {fileID: 11400000, guid: 2135960d4f6d7754289627f8bc0baaf0, type: 2}
+    amount: 75

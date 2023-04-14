@@ -13,12 +13,13 @@ public class ResourceUIManager : MonoBehaviour
     {
         WinState.OnWinGame += HideAllUI;
         LoseState.OnLoseGame += HideAllUI;
+        LevelSceneManager.OnRestart += ShowAllUI;
 
-        ResourceManager.OnResourceManagerInit += ResourceManager_OnResourceManagerInit;
-        ResourceManager.OnResourceAmountChange += ResourceManager_OnResourceAmountChange;
-        ResourceManager.OnResourceAmountMaxChange += ResourceManager_OnResourceAmountMaxChange;
+        ResourceManager.OnResourceManagerInit += SetUpSliders;
+        ResourceManager.OnResourceAmountChange += RefreshSliderValue;
+        ResourceManager.OnResourceAmountMaxChange += RefreshSliderMax;
     }
-    private void ResourceManager_OnResourceManagerInit(ResourceManagerData resourceData)
+    private void SetUpSliders(ResourceManagerData resourceData)
     {
         foreach (SliderData sliderData in resourceSliders)
         {
@@ -30,7 +31,7 @@ public class ResourceUIManager : MonoBehaviour
             sliderController.SetUpSlider(resourceData.resourceAmount[sliderResourceType], resourceData.resourceMax[sliderResourceType]);
         }
     }
-    private void ResourceManager_OnResourceAmountChange(Dictionary<ResourceType, float> resourceAmount)
+    private void RefreshSliderValue(Dictionary<ResourceType, float> resourceAmount)
     {
         foreach (SliderData sliderData in resourceSliders)
         {
@@ -40,7 +41,7 @@ public class ResourceUIManager : MonoBehaviour
             sliderController.SetSliderValue(resourceAmount[sliderResourceType]);
         }
     }
-    private void ResourceManager_OnResourceAmountMaxChange(Dictionary<ResourceType, float> resourceAmountMax)
+    private void RefreshSliderMax(Dictionary<ResourceType, float> resourceAmountMax)
     {
         foreach (SliderData sliderData in resourceSliders)
         {
@@ -50,20 +51,8 @@ public class ResourceUIManager : MonoBehaviour
             sliderController.SetSliderMax(resourceAmountMax[sliderResourceType]);
         }
     }
-    private void HideAllUI()
-    {
-        UnsubscribeEvents();
-        gameObject.SetActive(false);
-    } 
-    private void UnsubscribeEvents()
-    {
-        WinState.OnWinGame -= HideAllUI;
-        LoseState.OnLoseGame -= HideAllUI;
-
-        ResourceManager.OnResourceManagerInit -= ResourceManager_OnResourceManagerInit;
-        ResourceManager.OnResourceAmountChange -= ResourceManager_OnResourceAmountChange;
-        ResourceManager.OnResourceAmountMaxChange -= ResourceManager_OnResourceAmountMaxChange;
-    }
+    private void HideAllUI() => gameObject.SetActive(false);
+    private void ShowAllUI() => gameObject.SetActive(true);
 }
 [Serializable]
 public class SliderData

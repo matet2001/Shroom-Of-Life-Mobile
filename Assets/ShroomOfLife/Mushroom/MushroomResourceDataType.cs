@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "MushroomResourceData", menuName = "ScriptableObjects/Resources/MushroomResourceData")]
-public class MushroomResourceDataType : ResourceDataType
+public class MushroomResourceDataType : ScriptableObject
 {
     public List<ResourceUnit> resourceUse;
+    public List<ResourceUnit> resourceMax;
 
     [ContextMenu("Rebuild")]
     public void ReBuild()

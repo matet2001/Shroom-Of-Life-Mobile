@@ -12,3 +12,7 @@ public abstract class Collidable : MonoBehaviour
         OnCollidableCollision?.Invoke();
     }
 }
+public abstract class CollidableObstacle : Collidable
+{
+    
+}

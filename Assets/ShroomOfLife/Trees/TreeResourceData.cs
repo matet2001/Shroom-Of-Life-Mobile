@@ -6,7 +6,10 @@ using UnityEngine;
 
 public class TreeResourceData : ResourceData
 {
-    public Dictionary<ResourceType, float> resourceProduce;
+    //                GrowLevel ResourceTypeList(3)
+    public Dictionary<int, ResourceUnitList> resourceProduce;
+    public Dictionary<int, ResourceUnitList> resourceUse;
+    public Dictionary<int, ResourceUnitList> resourceMax;
 
     public TreeResourceData(TreeType treeType)
     {
@@ -16,26 +19,19 @@ public class TreeResourceData : ResourceData
     {
         SetUpResources();
 
-        foreach (ResourceType resourceType in resourceTypes)
+        for(int i = 0; i < treeType.resourceProduce.Count;i++)
         {
-            resourceUse[resourceType] = treeType.resourceUse.Find(x => x.type == resourceType).amount;
-            resourceProduce[resourceType] = treeType.resourceProduce.Find(x => x.type == resourceType).amount;
-            resourceMax[resourceType] = treeType.resourceMax.Find(x => x.type == resourceType).amount;
+            resourceProduce.Add(i, treeType.resourceProduce[i]);
+            resourceUse.Add(i, treeType.resourceUse[i]);
+            resourceMax.Add(i, treeType.resourceMax[i]);
         }
     }
     protected override void SetUpResources()
     {
         base.SetUpResources();
-        
-        resourceProduce = new Dictionary<ResourceType, float>();     
-    }
-    public void DuplicateResourceValues()
-    {
-        foreach (ResourceType resourceType in resourceTypes)
-        {
-            resourceUse[resourceType] *= 2;
-            resourceProduce[resourceType] *= 2;
-            resourceMax[resourceType] *= 2;
-        }
+
+        resourceProduce = new Dictionary<int, ResourceUnitList>();
+        resourceUse = new Dictionary<int, ResourceUnitList>();
+        resourceMax = new Dictionary<int, ResourceUnitList>();
     }
 }

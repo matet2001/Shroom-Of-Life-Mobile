@@ -12,27 +12,72 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7db9bb25b9aff4642b297b856437acc4, type: 3}
   m_Name: Acacia
   m_EditorClassIdentifier: 
-  resourceMax:
-  - type: {fileID: 11400000, guid: 00b7c9e9ae1a9e746a2588220c6a7a99, type: 2}
-    amount: 5
-  - type: {fileID: 11400000, guid: f2c7e2e086190e949a7f3e085c0b121d, type: 2}
-    amount: 25
-  - type: {fileID: 11400000, guid: 2135960d4f6d7754289627f8bc0baaf0, type: 2}
-    amount: 100
   resourceProduce:
-  - type: {fileID: 11400000, guid: 00b7c9e9ae1a9e746a2588220c6a7a99, type: 2}
-    amount: 0
-  - type: {fileID: 11400000, guid: f2c7e2e086190e949a7f3e085c0b121d, type: 2}
-    amount: 5
-  - type: {fileID: 11400000, guid: 2135960d4f6d7754289627f8bc0baaf0, type: 2}
-    amount: 20
+  - resourceUnits:
+    - type: {fileID: 11400000, guid: 00b7c9e9ae1a9e746a2588220c6a7a99, type: 2}
+      amount: 0
+    - type: {fileID: 11400000, guid: f2c7e2e086190e949a7f3e085c0b121d, type: 2}
+      amount: 5
+    - type: {fileID: 11400000, guid: 2135960d4f6d7754289627f8bc0baaf0, type: 2}
+      amount: 30
+  - resourceUnits:
+    - type: {fileID: 11400000, guid: 00b7c9e9ae1a9e746a2588220c6a7a99, type: 2}
+      amount: 0
+    - type: {fileID: 11400000, guid: f2c7e2e086190e949a7f3e085c0b121d, type: 2}
+      amount: 10
+    - type: {fileID: 11400000, guid: 2135960d4f6d7754289627f8bc0baaf0, type: 2}
+      amount: 40
+  - resourceUnits:
+    - type: {fileID: 11400000, guid: 00b7c9e9ae1a9e746a2588220c6a7a99, type: 2}
+      amount: 0
+    - type: {fileID: 11400000, guid: f2c7e2e086190e949a7f3e085c0b121d, type: 2}
+      amount: 10
+    - type: {fileID: 11400000, guid: 2135960d4f6d7754289627f8bc0baaf0, type: 2}
+      amount: 40
   resourceUse:
-  - type: {fileID: 11400000, guid: 00b7c9e9ae1a9e746a2588220c6a7a99, type: 2}
-    amount: 1
-  - type: {fileID: 11400000, guid: f2c7e2e086190e949a7f3e085c0b121d, type: 2}
-    amount: 0
-  - type: {fileID: 11400000, guid: 2135960d4f6d7754289627f8bc0baaf0, type: 2}
-    amount: 0
+  - resourceUnits:
+    - type: {fileID: 11400000, guid: 00b7c9e9ae1a9e746a2588220c6a7a99, type: 2}
+      amount: 1
+    - type: {fileID: 11400000, guid: f2c7e2e086190e949a7f3e085c0b121d, type: 2}
+      amount: 0
+    - type: {fileID: 11400000, guid: 2135960d4f6d7754289627f8bc0baaf0, type: 2}
+      amount: 0
+  - resourceUnits:
+    - type: {fileID: 11400000, guid: 00b7c9e9ae1a9e746a2588220c6a7a99, type: 2}
+      amount: 1
+    - type: {fileID: 11400000, guid: f2c7e2e086190e949a7f3e085c0b121d, type: 2}
+      amount: 0
+    - type: {fileID: 11400000, guid: 2135960d4f6d7754289627f8bc0baaf0, type: 2}
+      amount: 0
+  - resourceUnits:
+    - type: {fileID: 11400000, guid: 00b7c9e9ae1a9e746a2588220c6a7a99, type: 2}
+      amount: 0
+    - type: {fileID: 11400000, guid: f2c7e2e086190e949a7f3e085c0b121d, type: 2}
+      amount: 0
+    - type: {fileID: 11400000, guid: 2135960d4f6d7754289627f8bc0baaf0, type: 2}
+      amount: 0
+  resourceMax:
+  - resourceUnits:
+    - type: {fileID: 11400000, guid: 00b7c9e9ae1a9e746a2588220c6a7a99, type: 2}
+      amount: 5
+    - type: {fileID: 11400000, guid: f2c7e2e086190e949a7f3e085c0b121d, type: 2}
+      amount: 5
+    - type: {fileID: 11400000, guid: 2135960d4f6d7754289627f8bc0baaf0, type: 2}
+      amount: 30
+  - resourceUnits:
+    - type: {fileID: 11400000, guid: 00b7c9e9ae1a9e746a2588220c6a7a99, type: 2}
+      amount: 10
+    - type: {fileID: 11400000, guid: f2c7e2e086190e949a7f3e085c0b121d, type: 2}
+      amount: 15
+    - type: {fileID: 11400000, guid: 2135960d4f6d7754289627f8bc0baaf0, type: 2}
+      amount: 50
+  - resourceUnits:
+    - type: {fileID: 11400000, guid: 00b7c9e9ae1a9e746a2588220c6a7a99, type: 2}
+      amount: 15
+    - type: {fileID: 11400000, guid: f2c7e2e086190e949a7f3e085c0b121d, type: 2}
+      amount: 20
+    - type: {fileID: 11400000, guid: 2135960d4f6d7754289627f8bc0baaf0, type: 2}
+      amount: 60
   upgradeResourceCost:
   - type: {fileID: 11400000, guid: f2c7e2e086190e949a7f3e085c0b121d, type: 2}
     amount: 15

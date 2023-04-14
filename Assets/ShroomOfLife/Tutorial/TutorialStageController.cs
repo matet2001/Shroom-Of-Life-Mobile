@@ -5,29 +5,46 @@ using UnityEngine;
 
 public class TutorialStageController : MonoBehaviour
 {
-    [SerializeField] TutorialManager tutorialManager;
-    [SerializeField] float timeBeforeNextStage;
+    [SerializeField] List<GameObject> parts;
 
-    [SerializeField] GameObject firstStage;
-    [SerializeField] GameObject secondStage;
-    [SerializeField] GameObject thirdStage;
-    [SerializeField] GameObject fourthStage;
+    private int currentPartIndex = 0;
 
-    private void Start()
+    private void OnValidate()
     {
-        TryToShowTutorial(firstStage);
-        YarnMovementController.OnYarnStart += delegate () { TryToShowTutorial(secondStage); };
-        ConnectionManager.OnTreeListChange += delegate (TreeController treeController) { TryToShowTutorial(thirdStage); };
-        TreeUIManager.OnFirstUIShow += delegate () { TryToShowTutorial(fourthStage); };
+        GetParts();
     }
-    private IEnumerator NextStageTimer(float waitTime)
+    private void GetParts()
     {
-        yield return new WaitForSeconds(waitTime);
-        tutorialManager.NextStage();
+        parts = new List<GameObject>();
+
+        for (int i = 0; i < transform.childCount; i++)
+        {
+            GameObject child = transform.GetChild(i).gameObject;
+            child.gameObject.name = "StagePart" + (i + 1);
+            parts.Add(child);
+        }
     }
-    private void TryToShowTutorial(GameObject stage)
+    private void HideParts()
     {
-        if (tutorialManager.GetNextStage() == stage)
-            StartCoroutine(NextStageTimer(timeBeforeNextStage));
+        foreach (GameObject part in parts)
+        {
+            part.SetActive(false);
+        }
+    }
+    public bool IsReachedLastPart()
+    {
+        return currentPartIndex >= parts.Count - 1;
+    }
+    public void FirstPart()
+    {
+        HideParts();
+        currentPartIndex = 0;
+        parts[currentPartIndex].SetActive(true);
+    }
+    public void NextPart()
+    {
+        parts[currentPartIndex].SetActive(false);
+        currentPartIndex++;
+        parts[currentPartIndex].SetActive(true);
     }
 }

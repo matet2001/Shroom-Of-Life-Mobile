@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class MushroomResourceData : ResourceData
 {
+    public Dictionary<ResourceType, float> resourceUse;
+    public Dictionary<ResourceType, float> resourceMax;
 
     public MushroomResourceData(MushroomResourceDataType resourceDataType)
     {
@@ -13,6 +15,9 @@ public class MushroomResourceData : ResourceData
     private void Initialize(MushroomResourceDataType resourceDataType)
     {
         SetUpResources();
+
+        resourceUse = new Dictionary<ResourceType, float>();
+        resourceMax = new Dictionary<ResourceType, float>();
 
         foreach (ResourceType resourceType in resourceTypes)
         {

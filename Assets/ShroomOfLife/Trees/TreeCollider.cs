@@ -8,9 +8,11 @@ public class TreeCollider : Collidable
     public event Action OnYarnCollided;
 
     private new PolygonCollider2D collider;
+    
     private void Start()
     {
         collider = GetComponent<PolygonCollider2D>();
+        
     }
     public override void Collision()
     {

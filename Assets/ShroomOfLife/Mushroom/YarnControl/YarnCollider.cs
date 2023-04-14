@@ -10,6 +10,10 @@ public class YarnCollider : MonoBehaviour
         {
             collidable.Collision();
         }
+        if (collision.TryGetComponent(out StageTriggerer triggererObstacle))
+        {
+            triggererObstacle.Trigger();
+        }
     }
     private void OnTriggerExit2D(Collider2D collision)
     {

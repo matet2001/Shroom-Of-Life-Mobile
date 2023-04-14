@@ -12,26 +12,37 @@ namespace StateManagment
         public static event Action OnConquerStateExit;
 
         private CinemachineVirtualCamera virtualCamera;
+        [SerializeField] Transform cameraContainerTransform;
 
         private void Start()
+        {        
+            YarnMovementController.OnYarnStart += OnYarnStart;
+        }
+        private void OnYarnStart(Vector2 position)
         {
-            //YarnCrosshairController.OnYarnCrosshairEnter += (Vector2 position, float arcDistance) => SwitchToStopCamera(position);
-            //YarnCrosshairController.OnYarnCrosshairExit += (Vector2 position) => SwitchToFollowCamera(position);
+            stateVirtualCamera.transform.position = new Vector3(position.x, position.y, -10f);
 
-            YarnMovementController.OnYarnStart += TriggerTransitionEvent;
+            Transform globeTransform = cameraContainerTransform;
+            Vector2 globeCenter = globeTransform.position;
+            Vector2 yarnToCenterVector = position - globeCenter;
+            float angle = Vector2.SignedAngle(Vector2.up, yarnToCenterVector.normalized);
+
+            stateVirtualCamera.transform.eulerAngles = new Vector3(0f, 0f, angle);
+            TriggerTransitionEvent();
         }
         public override void OnEnter()
         {
             base.OnEnter();
 
             OnConquerStateEnter?.Invoke();
-
             SetCameraPositionToYarn();
         }
         private void SetCameraPositionToYarn()
         {
             if(!virtualCamera) virtualCamera = stateVirtualCamera.GetComponent<CinemachineVirtualCamera>();
+
             Vector3 positionToSet = virtualCamera.Follow.position;
+            positionToSet.z = -10f;
             stateVirtualCamera.transform.position = positionToSet;
         }
         public override void OnUpdate()
@@ -57,9 +68,5 @@ namespace StateManagment
         //    stopCamera.SetActive(false);
         //    stateVirtualCamera.SetActive(true);
         //}
-        public override bool TransitionToThisState()
-        {
-            return false;
-        }
     }
 }

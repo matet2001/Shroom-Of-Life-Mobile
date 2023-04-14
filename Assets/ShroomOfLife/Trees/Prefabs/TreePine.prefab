@@ -14,7 +14,7 @@ PrefabInstance:
     - target: {fileID: 7539187129825660512, guid: d6ef6b187337ee74a8ea0d38be2e75e7, type: 3}
       propertyPath: <treeType>k__BackingField
       value: 
-      objectReference: {fileID: 11400000, guid: 99be23b0c76dc9040be4c5ab7aa14c8a, type: 2}
+      objectReference: {fileID: 11400000, guid: 9d593c0344c573840b2455219519105c, type: 2}
     - target: {fileID: 7539187129825660515, guid: d6ef6b187337ee74a8ea0d38be2e75e7, type: 3}
       propertyPath: m_RootOrder
       value: 0

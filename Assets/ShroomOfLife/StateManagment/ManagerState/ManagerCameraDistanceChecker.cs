@@ -7,7 +7,7 @@ using UnityEngine;
 public class ManagerCameraDistanceChecker : MonoBehaviour
 {
     private List<TreeUIManager> treeUIList = new List<TreeUIManager>();
-    private List<MushroomController> mushroomList = new List<MushroomController>();
+    private List<MushroomController> mushroomUIList = new List<MushroomController>();
 
     private Transform cameraContainerTransform;
     private bool isManagerStateActive;
@@ -29,71 +29,106 @@ public class ManagerCameraDistanceChecker : MonoBehaviour
         ManagerState.OnManagerStateExit += delegate (Transform containerTransform) { isManagerStateActive = false; };
 
         GlobeCollider.OnYarnExitGlobe += CheckCanCreateMushroom;
+
+        WinState.OnWinGame += ManageGameEnd;
+        LoseState.OnLoseGame += ManageGameEnd;
+    }
+    private void ManageGameEnd()
+    {
+        foreach(TreeUIManager treeUI in treeUIList)
+        {
+            treeUI.SetUIActive(false);
+        }
+        foreach(MushroomController mushroomController in mushroomUIList)
+        {
+            mushroomController.SetStartButtonActive(false);
+        }
     }
     private void Update()
     {
-        CheckDistanceFromTrees();
-        CheckDistanceFromMushrooms();
+        ManageTreeUI();
+        ManageMushroomUI();
     }
     private void ConnectionInit(List<TreeController> treeList, List<MushroomController> mushroomList)
     {
+        treeUIList = new List<TreeUIManager>();
+        mushroomUIList = new List<MushroomController>();
+
         if (treeList.Count != 0) treeList.ForEach(tree => AddToTreeList(tree));
         if (mushroomList.Count != 0) mushroomList.ForEach(mushroom => AddToMushroomList(mushroom));
     }
     private void AddToTreeList(TreeController treeController)
     {
-         treeUIList.Add(treeController.GetTreeUIManager());
+        treeUIList.Add(treeController.GetTreeUIManager());
     }
     private void AddToMushroomList(MushroomController mushroomController)
     {
-        mushroomList.Add(mushroomController);
+        mushroomUIList.Add(mushroomController);
     }
 
     [SerializeField] float treeUIShowAngleDifference;
     [SerializeField] float mushroomUIShowAngleDifference;
     [SerializeField] float mushroomPlacementAngleDifference;
 
-    public void CheckDistanceFromTrees()
+    private void ManageTreeUI()
     {
         if (!isManagerStateActive) return;
         if (treeUIList.Count == 0) return;
 
         foreach (TreeUIManager treeUI in treeUIList)
         {
-            bool shouldShowUI = IsObjectCloserToCamera(treeUI.transform.position, mushroomUIShowAngleDifference);
-
-            if (treeUI.isUIVisible == shouldShowUI) continue;
-            treeUI.SetUIActive(shouldShowUI);
+            SetTreeUI(treeUI);
         }
     }
-    public void CheckDistanceFromMushrooms()
+    private void SetTreeUI(TreeUIManager treeUI)
+    {
+        bool shouldShowUI = IsObjectCloserToCamera(treeUI.transform.position, mushroomUIShowAngleDifference);
+        treeUI.SetUIActive(shouldShowUI);
+    }
+    private void ManageMushroomUI()
     {
         if (!isManagerStateActive) return;
-        if (mushroomList.Count == 0) return;
+        if (mushroomUIList.Count == 0) return;
 
-        foreach (MushroomController mushroomController in mushroomList)
+        foreach (MushroomController mushroomController in mushroomUIList)
         {
-            bool shouldShowUI = IsObjectCloserToCamera(mushroomController.transform.position, mushroomUIShowAngleDifference);
-            mushroomController.SetStartButtonActive(shouldShowUI);
+            SetMushroomUI(mushroomController);
         }
+    }
+    private void SetMushroomUI(MushroomController mushroomController)
+    {
+        bool shouldShowUI = IsObjectCloserToCamera(mushroomController.transform.position, mushroomUIShowAngleDifference);
+        mushroomController.SetStartButtonActive(shouldShowUI);
     }
     private void CheckCanCreateMushroom(Vector3 mushroomPosition)
     {
         float distanceFromNewMushroom = GetContainerToObjectAngle(mushroomPosition);
-        foreach (MushroomController mushroomController in mushroomList)
+        
+        foreach (MushroomController mushroomController in mushroomUIList)
         {
             float distanceFromCurrentMushroom = GetContainerToObjectAngle(mushroomController.transform.position);
             float distanceDifference = Mathf.Abs(distanceFromNewMushroom - distanceFromCurrentMushroom);
             if (distanceDifference < mushroomPlacementAngleDifference)
             {
+                JuiceTextCreator.CreateJuiceText("Can't place mushroom here, there is another mushroom too close", Color.red);
                 return;
             }
-            Debug.Log(distanceDifference.ToString() + " - " + mushroomPlacementAngleDifference.ToString());
+        }
+
+        foreach (TreeUIManager treeUI in treeUIList)
+        {
+            float distanceFromCurrentTree = GetContainerToObjectAngle(treeUI.transform.position);
+            float distanceDifference = Mathf.Abs(distanceFromNewMushroom - distanceFromCurrentTree);
+            if (distanceDifference < mushroomPlacementAngleDifference)
+            {
+                JuiceTextCreator.CreateJuiceText("Can't place mushroom here, there is tree too close", Color.red);
+                return;
+            }
         }
 
         OnCanCreateMushroom?.Invoke(mushroomPosition);
     }
-    public bool IsObjectCloserToCamera(Vector3 objectPosition, float angleDifference)
+    private bool IsObjectCloserToCamera(Vector3 objectPosition, float angleDifference)
     {
         float containerToObjectAngle = GetContainerToObjectAngle(objectPosition);
         float containerToCameraAngle = Vector2.SignedAngle(cameraContainerTransform.up, cameraContainerTransform.up);
@@ -105,5 +140,42 @@ public class ManagerCameraDistanceChecker : MonoBehaviour
         Vector2 containerToObjectVector = objectPosition - cameraContainerTransform.position;
         float containerToObjectAngle = Vector2.SignedAngle(containerToObjectVector, cameraContainerTransform.up);
         return containerToObjectAngle;
+    }
+    public Transform GetClosestObjectToDirection(float direction)
+    {
+        if (!isManagerStateActive) return null;
+
+        Transform closestMushroom = GetClosestMushroom(direction);
+        float closestMushroomAngle = GetClosestObjectAngle(closestMushroom);
+        
+        Transform closestTree = GetClosestTree(direction);
+        float closestTreeAngle = GetClosestObjectAngle(closestTree);
+
+        Transform returnTransform = closestMushroomAngle < closestTreeAngle ? closestMushroom : closestTree;
+        return returnTransform;
+    }
+    private Transform GetClosestMushroom(float direction)
+    {
+        foreach (MushroomController mushroomController in mushroomUIList)
+        {
+            float currentMushroomAngle = GetContainerToObjectAngle(mushroomController.transform.position);
+            if (currentMushroomAngle * direction > mushroomUIShowAngleDifference) return mushroomController.transform;
+        }
+        return null;
+    }
+    private Transform GetClosestTree(float direction)
+    {
+        foreach (TreeUIManager treeUI in treeUIList)
+        {
+            float currentTreeAngle = GetContainerToObjectAngle(treeUI.transform.position);
+            if (currentTreeAngle * direction > treeUIShowAngleDifference) return treeUI.transform;
+        }
+
+        return null;
+    }
+    private float GetClosestObjectAngle(Transform transform)
+    {
+        if (!transform) return Mathf.Infinity;
+        return Mathf.Abs(GetContainerToObjectAngle(transform.position));
     }
 }
