@@ -1,34 +1,31 @@
+using NaughtyAttributes;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class TutorialManager : MonoBehaviour
 {
     public static event Action OnStageReveale;
-    public static event Action<GameObject> OnStageHide;
+    public static event Action OnStageHide;
 
     [SerializeField] bool hasSeenTutorial = false;
     private bool isStageActive;
     
-    [SerializeField] Transform stageContainerTransform;
-    [SerializeField] GameObject[] stages;
-    private GameObject currentStage;
-    private TutorialStageController currentStageController;
+    [SerializeField] StageData[] stageDatas;
+    private StageData currentStageData;
+    private TutorialStageTriggerer currentTriggerer;
 
-    private void OnValidate()
-    {
-        GetStages();
-    }
+    [SerializeField] Transform stageContainer;
+    private GameObject stageControllerPrefab;
+
     private void Awake()
     {
+        SetUpStageObjectsPlayMode();
         HideAllChild();
-        Debug();
-    }
-    private void Start()
-    {
-        StageTriggerer.OnTrigger += TryToShowStage;
+        PlatformDebug();
     }
     private void Update()
     {
@@ -49,38 +46,113 @@ public class TutorialManager : MonoBehaviour
         }
     }
     #region StageControll
-    private void GetStages()
+    [Button]
+    private void SetUpStageObjectsEditor()
     {
-        if (!stageContainerTransform) return;
-
-        stages = new GameObject[stageContainerTransform.childCount];
-
-        for (int i = 0; i < stageContainerTransform.childCount; i++)
+        for (int i = 0; i < stageDatas.Length; i++)
         {
-            stages[i] = stageContainerTransform.GetChild(i).gameObject;
+            TutorialStageSO stageSO = stageDatas[i].stageSO;
+
+            TutorialStageController stageController = stageDatas[i].stageController;
+            if(!stageController)
+            {
+                //if (!stageControllerPrefab) stageControllerPrefab = Resources.Load<GameObject>("Stage");
+                ////stageDatas[i].stageController = 
+                //Instantiate(stageControllerPrefab, stageContainer);
+                //stageController = stageDatas[i].stageController;
+                continue;
+            }
+            stageController.SetStage(stageSO);
+
+            TutorialStageTriggerer stageTriggerer = stageDatas[i].stageTriggerer;
+            if (!stageTriggerer) continue;
+            stageTriggerer.SetTriggerer(stageSO);
+       
         }
     }
-    private void TryToShowStage(GameObject stageGameObject)
+    private void SetUpStageObjectsPlayMode()
+    {
+        for (int i = 0; i < stageDatas.Length; i++)
+        {
+            TutorialStageSO stageSO = stageDatas[i].stageSO;
+            TutorialStageController stageController = stageDatas[i].stageController;
+            TutorialStageTriggerer stageTriggerer = stageDatas[i].stageTriggerer;
+
+            stageController.SetStage(stageSO);
+            stageController.HideParts();
+            stageController.gameObject.SetActive(false);
+            if (!stageTriggerer) continue;
+            stageTriggerer.SetTriggerer(stageSO);
+            stageTriggerer.OnTrigger += delegate { TryToShowStage(stageSO); };
+            stageTriggerer.OnActivate += StageTriggerer_OnActivate;
+            stageTriggerer.SetTriggererActive(false);
+        }
+    }
+    private void StageTriggerer_OnActivate(TutorialStageTriggerer triggerer)
+    {
+        TurnOffCurrentStageTriggerer();
+        currentTriggerer = triggerer;
+    }
+    public void TryToShowStage(TutorialStageSO stageSO)
     {
         if (hasSeenTutorial) return;
         if (isStageActive) return;
 
-        currentStage = stageGameObject;
+        currentStageData = StageData.GetCurrentStageData(stageDatas ,stageSO);
+
         ShowStage();
-        
-        currentStageController = currentStage.GetComponent<TutorialStageController>();
-        currentStageController.FirstPart();
+        currentStageData.stageController.FirstPart();
     }
-    private void ShowStage() => SetStageActive(currentStage, true);
-    private void HideStage() => SetStageActive(currentStage, false);
-    private void SetStageActive(GameObject stageGameObject, bool active)
+    private void ShowStage()
     {
-        stageGameObject.SetActive(active);
-
-        if (active) ShowChilds();
-        else HideAllChild();
-
+        SetStageActive(true);
+        ShowChilds();
+        OnStageReveale?.Invoke();
+    } 
+    private void HideStage()
+    {
+        SetStageActive(false);
+        HideAllChild();
+        OnStageHide?.Invoke();
+    }
+    private void SetStageActive(bool active)
+    {
+        currentStageData.stageController.gameObject.SetActive(active);
         isStageActive = active;
+    }
+    private void StageOver()
+    {
+        HideStage();
+
+        if (!currentStageData.shouldActivateNextStageTriggerer) return;
+        
+        TurnOnNextStageTriggerer();
+    }
+    private void TurnOnNextStageTriggerer()
+    {
+        StageData nextStageData = StageData.GetNextStageData(stageDatas, currentStageData);
+        TurnOnStageTriggerer(nextStageData);
+    }
+    private void TurnOffCurrentStageTriggerer()
+    {
+        if (!currentTriggerer) return;
+        StageData triggererStageData = StageData.GetStageData(stageDatas, currentTriggerer);
+        TurnOffStageTriggerer(triggererStageData);
+    }
+    private void TurnOnStageTriggerer(StageData stageData)
+    {     
+        SetStageTriggererActive(stageData, true);
+        currentTriggerer = stageData.stageTriggerer;
+    }
+    private void TurnOffStageTriggerer(StageData stageData)
+    {
+        SetStageTriggererActive(stageData, false);
+    }  
+    private void SetStageTriggererActive(StageData stageData, bool active)
+    {
+        TutorialStageTriggerer stageTriggerer = stageData.stageTriggerer;
+        if (!stageTriggerer) return;
+        stageTriggerer.SetTriggererActive(active);
     }
     #endregion
     #region PartControll
@@ -90,34 +162,107 @@ public class TutorialManager : MonoBehaviour
         if (RaycastUtilities.PointerIsOverUI("Skip")) return;
         if (!InputManager.IsMouseLeftClickPressed()) return;
         
-        NextPart();
+        TryNextPart();
     }
-    private void NextPart()
+    private void TryNextPart()
     {
-        if (!currentStageController) return;
-        if (currentStageController.IsReachedLastPart())
+        if (!currentStageData.stageController) return;
+        if (currentStageData.stageController.IsReachedLastPart())
         {
-            HideStage();
+            StageOver();
             return;
         }
 
-        currentStageController.NextPart();
+        currentStageData.stageController.NextPart();
     }
     #endregion
     public void SkipTutorial()
     {
         hasSeenTutorial = true;
-        HideStage();
+        StageOver();
     }
-    private void Debug()
+    private void PlatformDebug()
     {
 #if UNITY_ANDROID || UNITY_WEBGL || UNITY_IOS
         hasSeenTutorial = false;
-        UnityEngine.Debug.Log("WEBGL/MOBILE");
+        Debug.Log("WEBGL/MOBILE");
 #endif
 #if UNITY_EDITOR
         //hasSeenTutorial = true;
         //UnityEngine.Debug.Log("EDITOR");
 #endif
+    }
+}
+[Serializable]
+public class StageData
+{
+    public TutorialStageSO stageSO;
+    public TutorialStageController stageController;
+    public TutorialStageTriggerer stageTriggerer;
+    public bool shouldActivateNextStageTriggerer;
+   
+
+    public static StageData GetCurrentStageData(StageData[] stageDatas, TutorialStageSO stageSO)
+    {
+        foreach (StageData stageData in stageDatas)
+        {
+            if (stageData.stageSO == stageSO)
+            {
+                return stageData;
+            }
+        }
+
+        return null;
+    }
+    public static StageData GetStageData(StageData[] stageDatas, TutorialStageTriggerer triggerer)
+    {
+        foreach (StageData stageData in stageDatas)
+        {
+            if (stageData.stageTriggerer == triggerer)
+            {
+                return stageData;
+            }
+        }
+
+        return null;
+    }
+    public static StageData GetNextStageData(StageData[] stageDatas, StageData currentStageData)
+    {
+        for (int i = 0; i < stageDatas.Length;i++)
+        {
+            if(currentStageData == stageDatas[i])
+            {
+                if(i == stageDatas.Length - 1)
+                {
+                    Debug.Log("There is no stage after " + currentStageData);
+                    return null;
+                }
+                return stageDatas[i + 1];
+            }
+        }
+
+        return null;
+    }
+    public static StageData GetPreviousStageData(StageData[] stageDatas, StageData currentStageData)
+    {
+        for (int i = 0; i < stageDatas.Length; i++)
+        {
+            if (currentStageData == stageDatas[i])
+            {
+                if (i == 0)
+                {
+                    Debug.Log("There is no stage before " + currentStageData);
+                    return null;
+                }
+                return stageDatas[i - 1];
+            }
+        }
+
+        return null;
+    }
+    [Button]
+    public void AddStageData()
+    {
+
     }
 }

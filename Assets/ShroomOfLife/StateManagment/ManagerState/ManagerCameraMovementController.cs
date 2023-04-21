@@ -27,7 +27,7 @@ public class ManagerCameraMovementController : MonoBehaviour
         MushroomController.OnMushroomCreate += SetCameraPosition;
 
         TutorialManager.OnStageReveale += Pause;
-        TutorialManager.OnStageHide += delegate (GameObject gm) { Continue(); };
+        TutorialManager.OnStageHide += Continue;
 
         LevelSceneManager.OnRestart += ResetCamera; 
     }

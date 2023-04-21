@@ -21,7 +21,7 @@ public class ResourceRefreshTimer : MonoBehaviour
         LoseState.OnLoseGame += ManageGameEnd;
         
         TutorialManager.OnStageReveale += Pause;
-        TutorialManager.OnStageHide += delegate (GameObject gm) { Continue(); };
+        TutorialManager.OnStageHide += Continue;
 
         LevelSceneManager.OnRestart += RestartTimer;
 

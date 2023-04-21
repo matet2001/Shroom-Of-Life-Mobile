@@ -10,6 +10,6 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: caf6ddd87cb3c5842b0c50116b4c9871, type: 3}
-  m_Name: Managment
+  m_Name: Turn
   m_EditorClassIdentifier: 
-  title: Managment
+  title: Turns

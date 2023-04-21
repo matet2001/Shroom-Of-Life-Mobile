@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class YarnMovementController : MonoBehaviour
 {
@@ -36,16 +37,10 @@ public class YarnMovementController : MonoBehaviour
         //YarnCrosshairController.OnYarnCrosshairExit += delegate (Vector2 position) { shouldMoveOnArc = false; };
 
         TutorialManager.OnStageReveale += PauseYarn;
-        TutorialManager.OnStageHide += TutorialManager_OnStageHide;
+        TutorialManager.OnStageHide += ContinueYarn;
 
         LevelSceneManager.OnRestart += Restart;
     }
-
-    private void TutorialManager_OnStageHide(GameObject obj)
-    {
-        ContinueYarn();
-    }
-
     private void OnDestroy()
     {
         WinState.OnWinGame -= ManageGameEnd;
@@ -72,6 +67,9 @@ public class YarnMovementController : MonoBehaviour
     private Material darkerYarnMaterial;
     public Biome startBiome { get; private set; }
 
+    public UnityEvent OnYarnFirstStart;
+    public UnityEvent OnYarnSecondStart;
+    private bool isFirstStart = true;
 
     public void TryToStartYarn(Vector3 startPosition)
     {
@@ -85,6 +83,16 @@ public class YarnMovementController : MonoBehaviour
         } 
 
         StartYarn(startPosition);
+
+        OnYarnFirstStart?.Invoke();
+        OnYarnFirstStart = new UnityEvent();
+        if(isFirstStart)
+        {
+            isFirstStart = false;
+            return;
+        }
+        OnYarnSecondStart?.Invoke();
+        OnYarnSecondStart = new UnityEvent();
     }
     private void StartYarn(Vector3 startPosition)
     {

@@ -10,7 +10,7 @@ public class MoveInputUI : MonoBehaviour
     [SerializeField] RectTransform cursorTransform, innerOutlineTransform, outerOutlineTransform;
     [SerializeField] float range;
 
-    private bool isHold;
+    private bool isHold, isPaused;
 
     private void OnValidate()
     {
@@ -36,14 +36,26 @@ public class MoveInputUI : MonoBehaviour
         LoseState.OnLoseGame += HideUI;
         WinState.OnWinGame += HideUI;
         LevelSceneManager.OnRestart += ShowUI;
+
+        TutorialManager.OnStageReveale += Pause;
+        TutorialManager.OnStageHide += Continue;
     }
-    
+    private void Pause()
+    {
+        isPaused = true;
+    }
+    private void Continue()
+    {
+        isPaused = false;
+    }
     private void Update()
     {
         SetCursorBasedOnInput();
     }
     private void SetCursorBasedOnInput()
     {
+        if (isPaused) return;
+        
         Vector2 mouseVector = GetMouseVector();
         SetIsHold(mouseVector);
 

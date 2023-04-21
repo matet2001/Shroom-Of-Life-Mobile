@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class ConnectionManager : MonoBehaviour
 {
@@ -10,6 +11,8 @@ public class ConnectionManager : MonoBehaviour
     
     public static event Action<TreeController> OnTreeListChange;
     public static event Action<MushroomController> OnMushroomListChange;
+
+    public UnityEvent OnFirstTreeConnected;
 
     public static event Action<List<TreeController>, List<MushroomController>> OnConnectionListInit;
 
@@ -99,6 +102,7 @@ public class ConnectionManager : MonoBehaviour
         if (treeControllerList.Contains(treeController)) return false;
 
         treeControllerList.Add(treeController);
+        if (treeControllerList.Count == 1) OnFirstTreeConnected?.Invoke();
         OnTreeListChange?.Invoke(treeController);
 
         return true;

@@ -10,7 +10,7 @@ public class YarnCollider : MonoBehaviour
         {
             collidable.Collision();
         }
-        if (collision.TryGetComponent(out StageTriggerer triggererObstacle))
+        if (collision.TryGetComponent(out TutorialStageTriggerer triggererObstacle))
         {
             triggererObstacle.Trigger();
         }

@@ -2,30 +2,44 @@ using Cinemachine;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using NaughtyAttributes;
 
 public class TutorialStageController : MonoBehaviour
 {
     [SerializeField] List<GameObject> parts;
+    [SerializeField] Transform staticElements;
 
     private int currentPartIndex = 0;
 
-    private void OnValidate()
+    public void SetStage(TutorialStageSO stageSO)
     {
+        SetName(stageSO.name);
         GetParts();
     }
+    [Button]
     private void GetParts()
     {
         parts = new List<GameObject>();
 
-        for (int i = 0; i < transform.childCount; i++)
+        int i = 1;
+
+        foreach (Transform child in transform)
         {
-            GameObject child = transform.GetChild(i).gameObject;
-            child.gameObject.name = "StagePart" + (i + 1);
-            parts.Add(child);
+            if (child == staticElements)
+            {
+                child.name = "StaticElements";
+                continue;
+            }
+            child.gameObject.name = "StagePart" + i;
+            parts.Add(child.gameObject);
+            i++;
         }
     }
-    private void HideParts()
+    private void SetName(string name) => gameObject.name = name + "Stage";
+    public void HideParts()
     {
+        string name = gameObject.name;
+        
         foreach (GameObject part in parts)
         {
             part.SetActive(false);

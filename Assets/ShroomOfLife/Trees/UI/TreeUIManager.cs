@@ -3,13 +3,14 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class TreeUIManager : MonoBehaviour
 {
     //For tutorial
-    public static event Action OnFirstUIShow;
+    public UnityEvent OnFirstUIShow;
     private bool isUIShowned;
     
     //UI
@@ -24,11 +25,14 @@ public class TreeUIManager : MonoBehaviour
     [SerializeField] Transform selectedCircleTransform;
 
     private GameObject focusSound;
+    private bool isPaused;
 
     private void Start()
     {
         RefreshUIActivity();
-        OnFirstUIShow += delegate () { isUIShowned = true; };
+
+        TutorialManager.OnStageReveale += delegate { isPaused = true; };
+        TutorialManager.OnStageHide += delegate { isPaused = false; };
     }
     private void Update()
     {
@@ -40,8 +44,13 @@ public class TreeUIManager : MonoBehaviour
         isUIVisible = active;
 
         RefreshUIActivity();
+        
         //Tutorial
-        if (active && !isUIShowned) OnFirstUIShow?.Invoke();  
+        if (active && !isUIShowned)
+        {
+            isUIShowned = true;
+            OnFirstUIShow?.Invoke();
+        }  
     }
     private void RefreshUIActivity()
     {
@@ -62,8 +71,9 @@ public class TreeUIManager : MonoBehaviour
                 focusSound = null;
             }
             return;
-        } 
-
+        }
+        
+        if (isPaused) return;
         selectedCircleTransform.Rotate(0f, 0f, 50f * Time.deltaTime, Space.Self);
 
         if(!focusSound)

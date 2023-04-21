@@ -48,6 +48,10 @@ PrefabInstance:
       value: 40.65
       objectReference: {fileID: 0}
     - target: {fileID: 8088408418234505357, guid: c5c4e7eafe759c647946d483945c0281, type: 3}
+      propertyPath: m_fontSizeMin
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 8088408418234505357, guid: c5c4e7eafe759c647946d483945c0281, type: 3}
       propertyPath: m_enableAutoSizing
       value: 1
       objectReference: {fileID: 0}
@@ -141,6 +145,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c5c4e7eafe759c647946d483945c0281, type: 3}
+--- !u!1 &3150248406028890786 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1044879063292255738, guid: c5c4e7eafe759c647946d483945c0281, type: 3}
+  m_PrefabInstance: {fileID: 2681833950318473048}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &5334175869582402859 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8012191215371668083, guid: c5c4e7eafe759c647946d483945c0281, type: 3}
@@ -159,4 +168,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   stage: {fileID: 0}
-  isNameSet: 0
+  textGameObject: {fileID: 0}
+  stageGameObject: {fileID: 3150248406028890786}
